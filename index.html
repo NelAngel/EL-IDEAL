@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Ventas - Pollería Arequipa</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h2 {
+    color: #ff6b35;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ff6b35;
+    padding-bottom: 10px;
+}
+
+select, input, button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+button {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    font-weight: bold;
+}
+
+tr:hover {
+    background: #f9f9f9;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat-card h4 {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.stat-card .value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.badge-efectivo {
+    background: #28a745;
+    color: white;
+}
+
+.badge-yape {
+    background: #17a2b8;
+    color: white;
+}
+
+.badge-plin {
+    background: #6f42c1;
+    color: white;
+}
+
+.badge-tarjeta {
+    background: #fd7e14;
+    color: white;
+}
+
+.btn-eliminar {
+    background: #dc3545;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.btn-editar {
+    background: #ffc107;
+    color: #333;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.buscar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #ff6b35;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-contenido {
+    background-color: white;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 15px;
+    width: 400px;
+    max-width: 90%;
+    animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.stock-bajo {
+    color: #dc3545;
+    font-weight: bold;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.historial-tabla {
+    width: 100%;
+    font-size: 12px;
+    overflow-x: auto;
+    display: block;
+}
+
+.historial-tabla table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.historial-tabla th {
+    background: #ff6b35;
+    color: white;
+    padding: 8px;
+    font-size: 11px;
+}
+
+.historial-tabla td {
+    padding: 6px;
+    font-size: 11px;
+}
+
+.historial-item {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.historial-header {
+    background: #ff6b35;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.totales-dia {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.totales-dia h3 {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.totales-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.total-item {
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.total-item .label {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.total-item .monto {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.venta-dia-item {
+    background: #f8f9fa;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 4px solid #ff6b35;
+}
+
+.venta-dia-header {
+    font-weight: bold;
+    color: #ff6b35;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    .totales-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <h1> "El Ideal" - Arequipa</h1>
+    <p>Hecho por Angel</p>
+</header>
+
+<div class="container">
+    <!-- Panel de Venta -->
+    <div class="card">
+        <h2>🛒 Registrar Venta</h2>
+        
+        <input type="text" id="buscarProducto" class="buscar" placeholder="🔍 Buscar producto...">
+        
+        <select id="producto">
+            <!-- Los productos se cargarán dinámicamente -->
+        </select>
+        
+        <select id="cantidad"></select>
+        
+        <select id="metodoPago">
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Yape">📱 Yape</option>
+            <option value="Plin">📱 Plin</option>
+            <option value="Tarjeta">💳 Tarjeta</option>
+        </select>
+        
+        <button onclick="agregarProducto()">➕ Agregar Producto</button>
+        <button onclick="abrirModalPropina()">💝 Agregar Propina</button>
+        
+        <h3 style="margin-top: 20px;">Venta Actual</h3>
+        <table>
+            <thead>
+                <tr><th>Producto</th><th>Precio</th><th>Cant</th><th>Total</th><th>Método</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="tablaVenta"></tbody>
+        </table>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <h3>Subtotal: S/ <span id="subtotal">0.00</span></h3>
+            <h3>Propina: S/ <span id="propina">0.00</span></h3>
+            <h3 style="color: #ff6b35;">💰 TOTAL: S/ <span id="totalGeneral">0.00</span></h3>
+        </div>
+        
+        <button onclick="finalizarVenta()" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 16px;">✅ Finalizar Venta e Imprimir</button>
+        <button onclick="cancelarVenta()" style="width: 100%; margin-top: 5px; background: #dc3545;">❌ Cancelar Venta</button>
+    </div>
+    
+    <!-- Panel de Estadísticas y Resumen del Día -->
+    <div>
+        <div class="card">
+            <h2>📊 Resumen de Ventas del Día</h2>
+            
+            <!-- Totales del día -->
+            <div class="totales-dia">
+                <h3>💰 TOTAL GANADO HOY</h3>
+                <div class="totales-grid">
+                    <div class="total-item">
+                        <div class="label">💵 Efectivo</div>
+                        <div class="monto" id="totalEfectivoDia">S/0.00</div>
+                    </div>
+                    <div class="total-item">
+                        <div class="label">📱 Yape</div>
+                        <div class="monto" id="totalYapeDia">S/0.00</div>
+                    </div>
+                    <div class="total-item">
+                        <div class="label">📱 Plin</div>
+                        <div class="monto" id="totalPlinDia">S/0.00</div>
+                    </div>
+                    <div class="total-item">
+                        <div class="label">💳 Tarjeta</div>
+                        <div class="monto" id="totalTarjetaDia">S/0.00</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 2px solid rgba(255,255,255,0.3);">
+                    <strong>🎯 TOTAL GENERAL: S/ <span id="totalGeneralDia" style="font-size: 24px;">0.00</span></strong>
+                </div>
+            </div>
+            
+            <!-- Lista de ventas del día -->
+            <h3 style="margin-top: 20px;">📋 Ventas Realizadas Hoy</h3>
+            <div id="ventasDelDia" style="max-height: 400px; overflow-y: auto; margin-top: 10px;"></div>
+        </div>
+        
+        <div class="card">
+            <h2>📜 Historial Completo de Ventas</h2>
+            <input type="date" id="filtroFecha" style="width: 100%; margin-bottom: 10px;">
+            <button onclick="exportarCSV()" style="background: #28a745; margin-bottom: 10px;">📥 Exportar a Excel</button>
+            <div id="historialVentas" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Propina -->
+<div id="modalPropina" class="modal">
+    <div class="modal-contenido">
+        <h3>💝 Agregar Propina</h3>
+        <input type="number" id="inputPropina" step="0.50" placeholder="Monto de propina" style="width: 100%; margin: 10px 0;">
+        <button onclick="agregarPropina()">Aplicar Propina</button>
+        <button onclick="cerrarModalPropina()">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal Notificación -->
+<div id="modalNotificacion" class="modal">
+    <div class="modal-contenido">
+        <h3 id="notifTitulo">✅ Notificación</h3>
+        <p id="notifMensaje"></p>
+        <button onclick="cerrarModalNotificacion()">Aceptar</button>
+    </div>
+</div>
+
+<script>
+// ==================== DATOS DEL SISTEMA ====================
+let productos = [
+    { id: 1, nombre: "Cono escolar", precio: 2.00, stock: 50 },
+    { id: 2, nombre: "Salchicono", precio: 3.50, stock: 40 },
+    { id: 3, nombre: "Promoción", precio: 5.00, stock: 30 },
+    { id: 4, nombre: "Salchinuggets", precio: 6.00, stock: 25 },
+    { id: 5, nombre: "Salchipapa", precio: 9.00, stock: 20 },
+    { id: 6, nombre: "Royal", precio: 10.00, stock: 15 },
+    { id: 7, nombre: "Pollo broster", precio: 12.00, stock: 10 },
+    { id: 8, nombre: "Mega cono", precio: 10.00, stock: 18 },
+    { id: 9, nombre: "Salchipollo sandwich", precio: 5.00, stock: 22 },
+    { id: 10, nombre: "Chicha", precio: 2.00, stock: 60 },
+    { id: 11, nombre: "Agua", precio: 2.00, stock: 55 },
+    { id: 12, nombre: "Gaseosas", precio: 4.00, stock: 45 },
+    { id: 13, nombre: "Escocesa", precio: 3.00, stock: 35 },
+    { id: 14, nombre: "Mini gaseosas", precio: 2.00, stock: 50 }
+];
+
+let ventaActual = [];
+let propinaActual = 0;
+let historialVentas = JSON.parse(localStorage.getItem('historialVentas')) || [];
+
+// ==================== FUNCIONES DE INICIALIZACIÓN ====================
+function cargarProductos(filtro = "") {
+    let select = document.getElementById('producto');
+    select.innerHTML = '';
+    
+    let productosFiltrados = productos.filter(p => 
+        p.nombre.toLowerCase().includes(filtro.toLowerCase())
+    );
+    
+    productosFiltrados.forEach(producto => {
+        let option = document.createElement('option');
+        option.value = producto.id;
+        option.textContent = `${producto.nombre} - S/${producto.precio.toFixed(2)} (Stock: ${producto.stock})`;
+        if(producto.stock < 5) {
+            option.style.color = '#dc3545';
+            option.style.fontWeight = 'bold';
+        }
+        select.appendChild(option);
+    });
+}
+
+function cargarCantidades() {
+    let selectCantidad = document.getElementById('cantidad');
+    let productoId = parseInt(document.getElementById('producto').value);
+    let producto = productos.find(p => p.id === productoId);
+    let maxStock = producto ? producto.stock : 20;
+    
+    selectCantidad.innerHTML = '';
+    for(let i = 1; i <= Math.min(maxStock, 20); i++) {
+        let option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        selectCantidad.appendChild(option);
+    }
+}
+
+// ==================== FUNCIONES DE VENTA ====================
+function agregarProducto() {
+    let productoId = parseInt(document.getElementById('producto').value);
+    let producto = productos.find(p => p.id === productoId);
+    let cantidad = parseInt(document.getElementById('cantidad').value);
+    let metodo = document.getElementById('metodoPago').value;
+    
+    // Validar stock
+    if(cantidad > producto.stock) {
+        mostrarNotificacion("❌ Error", `Stock insuficiente. Solo quedan ${producto.stock} unidades.`);
+        return;
+    }
+    
+    // Verificar si ya existe en la venta actual
+    let existente = ventaActual.find(v => v.productoId === productoId && v.metodo === metodo);
+    
+    if(existente) {
+        let nuevaCantidad = existente.cantidad + cantidad;
+        if(nuevaCantidad > producto.stock + existente.cantidad) {
+            mostrarNotificacion("❌ Error", "No hay suficiente stock disponible");
+            return;
+        }
+        existente.cantidad = nuevaCantidad;
+        existente.total = existente.precio * nuevaCantidad;
+    } else {
+        ventaActual.push({
+            productoId: producto.id,
+            producto: producto.nombre,
+            precio: producto.precio,
+            cantidad: cantidad,
+            total: producto.precio * cantidad,
+            metodo: metodo
+        });
+    }
+    
+    // Descontar stock temporalmente
+    producto.stock -= cantidad;
+    
+    actualizarTablaVenta();
+    cargarProductos(document.getElementById('buscarProducto').value);
+    mostrarNotificacion("✅ Producto Agregado", `${cantidad}x ${producto.nombre} agregado (${metodo})`);
+}
+
+function actualizarTablaVenta() {
+    let tbody = document.getElementById('tablaVenta');
+    tbody.innerHTML = '';
+    let subtotal = 0;
+    
+    ventaActual.forEach((item, index) => {
+        subtotal += item.total;
+        
+        let fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${item.producto}</td>
+            <td>S/${item.precio.toFixed(2)}</td>
+            <td>
+                <button class="btn-editar" onclick="editarCantidad(${index})">✏️</button>
+                ${item.cantidad}
+                <button class="btn-editar" onclick="aumentarCantidad(${index})">+</button>
+            </td>
+            <td>S/${item.total.toFixed(2)}</td>
+            <td><span class="badge badge-${item.metodo.toLowerCase()}">${item.metodo}</span></td>
+            <td><button class="btn-eliminar" onclick="eliminarProducto(${index})">🗑️</button></td>
+        `;
+        tbody.appendChild(fila);
+    });
+    
+    let totalGeneral = subtotal + propinaActual;
+    
+    document.getElementById('subtotal').innerText = subtotal.toFixed(2);
+    document.getElementById('propina').innerText = propinaActual.toFixed(2);
+    document.getElementById('totalGeneral').innerText = totalGeneral.toFixed(2);
+}
+
+function editarCantidad(index) {
+    let nuevaCantidad = prompt("Nueva cantidad:", ventaActual[index].cantidad);
+    if(nuevaCantidad && !isNaN(nuevaCantidad)) {
+        nuevaCantidad = parseInt(nuevaCantidad);
+        let productoOriginal = productos.find(p => p.id === ventaActual[index].productoId);
+        let diferencia = nuevaCantidad - ventaActual[index].cantidad;
+        
+        if(diferencia > 0 && diferencia > productoOriginal.stock) {
+            mostrarNotificacion("❌ Error", "Stock insuficiente");
+            return;
+        }
+        
+        productoOriginal.stock -= diferencia;
+        ventaActual[index].cantidad = nuevaCantidad;
+        ventaActual[index].total = ventaActual[index].precio * nuevaCantidad;
+        
+        actualizarTablaVenta();
+        cargarProductos(document.getElementById('buscarProducto').value);
+    }
+}
+
+function aumentarCantidad(index) {
+    let productoOriginal = productos.find(p => p.id === ventaActual[index].productoId);
+    if(productoOriginal.stock > 0) {
+        productoOriginal.stock--;
+        ventaActual[index].cantidad++;
+        ventaActual[index].total = ventaActual[index].precio * ventaActual[index].cantidad;
+        actualizarTablaVenta();
+        cargarProductos(document.getElementById('buscarProducto').value);
+    } else {
+        mostrarNotificacion("❌ Error", "Stock agotado");
+    }
+}
+
+function eliminarProducto(index) {
+    let productoOriginal = productos.find(p => p.id === ventaActual[index].productoId);
+    productoOriginal.stock += ventaActual[index].cantidad;
+    ventaActual.splice(index, 1);
+    actualizarTablaVenta();
+    cargarProductos(document.getElementById('buscarProducto').value);
+    mostrarNotificacion("🗑️ Producto Eliminado", "El producto ha sido removido");
+}
+
+function abrirModalPropina() {
+    document.getElementById('modalPropina').style.display = 'block';
+}
+
+function cerrarModalPropina() {
+    document.getElementById('modalPropina').style.display = 'none';
+    document.getElementById('inputPropina').value = '';
+}
+
+function agregarPropina() {
+    let propina = parseFloat(document.getElementById('inputPropina').value);
+    if(!isNaN(propina) && propina >= 0) {
+        propinaActual = propina;
+        actualizarTablaVenta();
+        cerrarModalPropina();
+        mostrarNotificacion("💝 Propina Agregada", `Propina de S/${propina.toFixed(2)} agregada`);
+    } else {
+        mostrarNotificacion("❌ Error", "Ingrese un monto válido");
+    }
+}
+
+function finalizarVenta() {
+    if(ventaActual.length === 0) {
+        mostrarNotificacion("⚠️ Venta Vacía", "Agregue productos antes de finalizar");
+        return;
+    }
+    
+    // Determinar el método de pago único (tomamos el del primer producto)
+    let metodoUnico = ventaActual[0].metodo;
+    let metodoValido = true;
+    
+    // Verificar que todos los productos tengan el mismo método de pago
+    for(let i = 1; i < ventaActual.length; i++) {
+        if(ventaActual[i].metodo !== metodoUnico) {
+            metodoValido = false;
+            break;
+        }
+    }
+    
+    if(!metodoValido) {
+        mostrarNotificacion("⚠️ Métodos Mixtos", "Todos los productos deben usar el mismo método de pago. Por favor, unifique el método de pago.");
+        return;
+    }
+    
+    let subtotal = parseFloat(document.getElementById('subtotal').innerText);
+    let totalGeneral = subtotal + propinaActual;
+    
+    let ventaCompleta = {
+        id: Date.now(),
+        fecha: new Date().toLocaleString(),
+        fechaObj: new Date(),
+        items: [...ventaActual],
+        subtotal: subtotal,
+        propina: propinaActual,
+        total: totalGeneral,
+        metodoPago: metodoUnico
+    };
+    
+    historialVentas.unshift(ventaCompleta); // Agregar al inicio para mostrar más reciente primero
+    localStorage.setItem('historialVentas', JSON.stringify(historialVentas));
+    
+    // Imprimir boleta
+    imprimirBoleta(ventaCompleta);
+    
+    // Resetear venta actual
+    ventaActual = [];
+    propinaActual = 0;
+    actualizarTablaVenta();
+    cargarProductos();
+    actualizarResumenDelDia();
+    actualizarHistorial();
+    
+    mostrarNotificacion("✅ Venta Completada", `Venta por S/${totalGeneral.toFixed(2)} registrada exitosamente`);
+}
+
+function cancelarVenta() {
+    if(confirm("¿Estás seguro de cancelar la venta? Se restaurará el stock.")) {
+        // Restaurar stock
+        ventaActual.forEach(item => {
+            let producto = productos.find(p => p.id === item.productoId);
+            if(producto) producto.stock += item.cantidad;
+        });
+        
+        ventaActual = [];
+        propinaActual = 0;
+        actualizarTablaVenta();
+        cargarProductos();
+        mostrarNotificacion("🔄 Venta Cancelada", "Se ha cancelado la venta actual");
+    }
+}
+
+// ==================== RESUMEN DEL DÍA ====================
+function actualizarResumenDelDia() {
+    let hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    let ventasHoy = historialVentas.filter(v => {
+        let fechaVenta = new Date(v.fechaObj);
+        fechaVenta.setHours(0, 0, 0, 0);
+        return fechaVenta.getTime() === hoy.getTime();
+    });
+    
+    // Calcular totales por método de pago
+    let totales = {
+        Efectivo: 0,
+        Yape: 0,
+        Plin: 0,
+        Tarjeta: 0,
+        General: 0
+    };
+    
+    ventasHoy.forEach(venta => {
+        totales[venta.metodoPago] += venta.total;
+        totales.General += venta.total;
+    });
+    
+    // Actualizar los totales en la interfaz
+    document.getElementById('totalEfectivoDia').innerText = `S/${totales.Efectivo.toFixed(2)}`;
+    document.getElementById('totalYapeDia').innerText = `S/${totales.Yape.toFixed(2)}`;
+    document.getElementById('totalPlinDia').innerText = `S/${totales.Plin.toFixed(2)}`;
+    document.getElementById('totalTarjetaDia').innerText = `S/${totales.Tarjeta.toFixed(2)}`;
+    document.getElementById('totalGeneralDia').innerText = `${totales.General.toFixed(2)}`;
+    
+    // Mostrar lista de ventas del día
+    let ventasDiv = document.getElementById('ventasDelDia');
+    
+    if(ventasHoy.length === 0) {
+        ventasDiv.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas registradas hoy</p>';
+        return;
+    }
+    
+    ventasDiv.innerHTML = ventasHoy.map((venta, idx) => `
+        <div class="venta-dia-item">
+            <div class="venta-dia-header">
+                🕐 ${venta.fecha} - ${venta.metodoPago}
+            </div>
+            <div style="font-size: 13px;">
+                ${venta.items.map(item => `• ${item.cantidad}x ${item.producto}`).join(' | ')}
+            </div>
+            <div style="margin-top: 5px; font-weight: bold; color: #ff6b35;">
+                Total: S/${venta.total.toFixed(2)}
+                ${venta.propina > 0 ? ` (Propina: S/${venta.propina.toFixed(2)})` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== IMPRESIÓN ====================
+function imprimirBoleta(venta) {
+    let iconoMetodo = {
+        'Efectivo': '💵',
+        'Yape': '📱',
+        'Plin': '📱',
+        'Tarjeta': '💳'
+    };
+    
+    let contenido = `
+        <div style="font-family: monospace; width: 300px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center;">
+                <h3>EL IDEAL</h3>
+                <p>Fast & Food<br>
+                Calle San Francisco 308, Cercado<br>
+                Arequipa - Perú<br>
+                ${venta.fecha}</p>
+            </div>
+            <hr>
+            <table style="width: 100%; font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th>Prod</th>
+                        <th>Cant</th>
+                        <th>Precio</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${venta.items.map(item => `
+                        <tr>
+                            <td>${item.producto}</td>
+                            <td style="text-align:center">${item.cantidad}</td>
+                            <td style="text-align:right">S/${item.precio.toFixed(2)}</td>
+                            <td style="text-align:right">S/${item.total.toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <hr>
+            <div style="text-align: right;">
+                <p>Subtotal: S/${venta.subtotal.toFixed(2)}</p>
+                ${venta.propina > 0 ? `<p>Propina: S/${venta.propina.toFixed(2)}</p>` : ''}
+                <p><strong>TOTAL: S/${venta.total.toFixed(2)}</strong></p>
+                <hr>
+                <p><strong>${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}</strong></p>
+            </div>
+            <hr>
+            <p style="text-align: center;">¡Gracias por su preferencia!<br>Vuelva pronto</p>
+        </div>
+    `;
+    
+    let ventana = window.open('', '', 'width=350,height=600');
+    ventana.document.write(contenido);
+    ventana.document.close();
+    ventana.print();
+}
+
+// ==================== HISTORIAL ====================
+function actualizarHistorial() {
+    let filtroFecha = document.getElementById('filtroFecha').value;
+    let historialDiv = document.getElementById('historialVentas');
+    
+    let ventasFiltradas = historialVentas;
+    if(filtroFecha) {
+        ventasFiltradas = historialVentas.filter(v => 
+            v.fecha.split(',')[0] === new Date(filtroFecha).toLocaleDateString()
+        );
+    }
+    
+    if(ventasFiltradas.length === 0) {
+        historialDiv.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas registradas</p>';
+        return;
+    }
+    
+    historialDiv.innerHTML = ventasFiltradas.map((venta, idx) => `
+        <div class="historial-item">
+            <div class="historial-header">
+                📅 Venta #${ventasFiltradas.length - idx} - ${venta.fecha}
+            </div>
+            <div class="historial-tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${venta.items.map(item => `
+                            <tr>
+                                <td>${item.producto}</td>
+                                <td style="text-align:center">${item.cantidad}</td>
+                                <td style="text-align:right">S/${item.precio.toFixed(2)}</td>
+                                <td style="text-align:right">S/${item.total.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="background: #f0f0f0; font-weight: bold;">
+                            <td colspan="3" style="text-align:right">Subtotal:</td>
+                            <td style="text-align:right">S/${venta.subtotal.toFixed(2)}</td>
+                        </tr>
+                        ${venta.propina > 0 ? `
+                        <tr style="background: #f0f0f0;">
+                            <td colspan="3" style="text-align:right">Propina:</td>
+                            <td style="text-align:right">S/${venta.propina.toFixed(2)}</td>
+                        </tr>
+                        ` : ''}
+                        <tr style="background: #ff6b35; color: white; font-weight: bold;">
+                            <td colspan="3" style="text-align:right">TOTAL:</td>
+                            <td style="text-align:right">S/${venta.total.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align:center; background: #e9ecef;">
+                                <strong>💰 Método de Pago: ${venta.metodoPago}</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `).join('');
+}
+
+function exportarCSV() {
+    let csv = "Fecha,Productos,Subtotal,Propina,Total,MetodoPago\n";
+    historialVentas.forEach(venta => {
+        let productos = venta.items.map(i => `${i.cantidad}x${i.producto}`).join(" | ");
+        csv += `"${venta.fecha}","${productos}",${venta.subtotal},${venta.propina},${venta.total},${venta.metodoPago}\n`;
+    });
+    
+    let blob = new Blob([csv], { type: 'text/csv' });
+    let link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `ventas_arequipa_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    mostrarNotificacion("📥 Exportación Exitosa", "Archivo CSV generado correctamente");
+}
+
+// ==================== NOTIFICACIONES ====================
+function mostrarNotificacion(titulo, mensaje) {
+    document.getElementById('notifTitulo').innerHTML = titulo;
+    document.getElementById('notifMensaje').innerHTML = mensaje;
+    document.getElementById('modalNotificacion').style.display = 'block';
+    
+    setTimeout(() => {
+        cerrarModalNotificacion();
+    }, 3000);
+}
+
+function cerrarModalNotificacion() {
+    document.getElementById('modalNotificacion').style.display = 'none';
+}
+
+// ==================== EVENTOS ====================
+document.getElementById('buscarProducto').addEventListener('input', function(e) {
+    cargarProductos(e.target.value);
+});
+
+document.getElementById('producto').addEventListener('change', cargarCantidades);
+document.getElementById('filtroFecha').addEventListener('change', actualizarHistorial);
+
+// Inicializar
+cargarProductos();
+cargarCantidades();
+actualizarResumenDelDia();
+actualizarHistorial();
+
+</script>
+
+</body>
+</html>
