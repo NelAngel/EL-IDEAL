@@ -526,22 +526,18 @@ function verificarPassword() {
     let password = document.getElementById('passwordInput').value;
     
     if(password === CONTRASENA_CORRECTA) {
-        // Ocultar login y mostrar contenido
         document.getElementById('loginContainer').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
         
-        // Inicializar el sistema DESPUÉS de mostrar el contenido
         setTimeout(() => {
             inicializarSistema();
         }, 100);
     } else {
-        // Mostrar error
         let errorMsg = document.getElementById('errorMsg');
         errorMsg.style.display = 'block';
         document.getElementById('passwordInput').value = '';
         document.getElementById('passwordInput').focus();
         
-        // Ocultar error después de 3 segundos
         setTimeout(() => {
             errorMsg.style.display = 'none';
         }, 3000);
@@ -592,7 +588,6 @@ function inicializarSistema() {
     actualizarResumenDelDia();
     actualizarHistorial();
     
-    // Eventos
     document.getElementById('buscarProducto').addEventListener('input', function(e) {
         cargarProductos(e.target.value);
     });
@@ -600,14 +595,12 @@ function inicializarSistema() {
     document.getElementById('producto').addEventListener('change', cargarCantidades);
     document.getElementById('filtroFecha').addEventListener('change', actualizarHistorial);
     
-    // Botones principales
     document.getElementById('btnAgregarProducto').onclick = agregarProducto;
     document.getElementById('btnAgregarPropina').onclick = abrirModalPropina;
     document.getElementById('btnFinalizarVenta').onclick = finalizarVenta;
     document.getElementById('btnCancelarVenta').onclick = cancelarVenta;
     document.getElementById('btnExportarCSV').onclick = exportarCSV;
     
-    // Botones modales
     document.getElementById('btnAplicarPropina').onclick = agregarPropina;
     document.getElementById('btnCancelarPropina').onclick = cerrarModalPropina;
     document.getElementById('btnCerrarNotificacion').onclick = cerrarModalNotificacion;
@@ -642,7 +635,6 @@ function cargarCantidades() {
     }
 }
 
-// ==================== FUNCIONES DE VENTA ====================
 function agregarProducto() {
     let productoId = parseInt(document.getElementById('producto').value);
     let producto = productos.find(p => p.id === productoId);
@@ -793,14 +785,10 @@ function cancelarVenta() {
     }
 }
 
-// ==================== IMPRESIÓN MEJORADA (Letra grande y centrada) ====================
+// ==================== IMPRESIÓN CORREGIDA - Ya no se repite ====================
 function imprimirBoleta(venta) {
-    let iframe = document.createElement('iframe');
-    iframe.style.position = 'absolute';
-    iframe.style.width = '0px';
-    iframe.style.height = '0px';
-    iframe.style.border = 'none';
-    document.body.appendChild(iframe);
+    // Crear el contenido de la boleta en una ventana nueva
+    let ventanaImpresion = window.open('', '_blank', 'width=400,height=600,toolbar=no,menubar=no');
     
     let iconoMetodo = {
         'Efectivo': '💵',
@@ -816,24 +804,6 @@ function imprimirBoleta(venta) {
             <meta charset="UTF-8">
             <title>Boleta - El Ideal</title>
             <style>
-                @media print {
-                    body {
-                        margin: 0;
-                        padding: 20px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        min-height: 100vh;
-                    }
-                    .ticket {
-                        width: 100%;
-                        max-width: 90mm;
-                        margin: 0 auto;
-                        font-size: 16px;
-                        font-family: monospace;
-                        text-align: center;
-                    }
-                }
                 * {
                     margin: 0;
                     padding: 0;
@@ -842,40 +812,47 @@ function imprimirBoleta(venta) {
                 body {
                     font-family: 'Courier New', monospace;
                     background: white;
+                    padding: 30px 20px;
                     display: flex;
                     justify-content: center;
-                    align-items: center;
                     min-height: 100vh;
-                    padding: 20px;
                 }
                 .ticket {
                     width: 100%;
-                    max-width: 90mm;
+                    max-width: 350px;
                     margin: 0 auto;
-                    font-size: 16px;
-                    line-height: 1.6;
+                    font-size: 18px;
+                    line-height: 1.8;
                     text-align: center;
                 }
                 hr {
                     border: none;
                     border-top: 2px dashed #000;
-                    margin: 10px 0;
+                    margin: 15px 0;
                 }
-                .text-center {
-                    text-align: center;
-                }
-                .total {
+                .logo-texto {
+                    font-size: 28px;
                     font-weight: bold;
-                    font-size: 20px;
+                    letter-spacing: 3px;
+                    margin-bottom: 10px;
+                }
+                .empresa-info {
+                    font-size: 16px;
+                    margin: 5px 0;
+                }
+                .fecha {
+                    font-size: 16px;
+                    margin: 10px 0;
                 }
                 .producto-linea {
                     text-align: left;
-                    margin: 8px 0;
-                    font-size: 15px;
+                    margin: 12px 0;
+                    font-size: 17px;
                 }
                 .producto-nombre {
                     display: inline-block;
                     width: 55%;
+                    font-weight: normal;
                 }
                 .producto-cantidad {
                     display: inline-block;
@@ -886,11 +863,19 @@ function imprimirBoleta(venta) {
                     display: inline-block;
                     width: 28%;
                     text-align: right;
+                    font-weight: bold;
+                }
+                .precio-unitario {
+                    font-size: 14px;
+                    text-align: right;
+                    margin-top: -8px;
+                    margin-bottom: 8px;
+                    color: #555;
                 }
                 .resumen-linea {
                     text-align: right;
-                    margin: 5px 0;
-                    font-size: 16px;
+                    margin: 8px 0;
+                    font-size: 18px;
                 }
                 .resumen-label {
                     display: inline-block;
@@ -903,35 +888,50 @@ function imprimirBoleta(venta) {
                     text-align: right;
                     font-weight: bold;
                 }
-                .metodo-pago {
-                    font-size: 18px;
+                .total-linea {
+                    font-size: 22px;
                     font-weight: bold;
-                    margin: 10px 0;
+                    margin-top: 10px;
+                    padding-top: 10px;
+                    border-top: 2px solid #000;
+                }
+                .metodo-pago {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin: 15px 0;
+                    padding: 8px;
+                    background: #f0f0f0;
+                    border-radius: 8px;
                 }
                 .gracias {
+                    margin-top: 20px;
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+                .fin {
                     margin-top: 15px;
                     font-size: 16px;
-                    font-weight: bold;
+                    font-style: italic;
                 }
-                h3 {
-                    font-size: 22px;
-                    margin: 5px 0;
-                }
-                .logo-texto {
-                    font-size: 24px;
-                    font-weight: bold;
-                    letter-spacing: 2px;
+                @media print {
+                    body {
+                        padding: 0;
+                        margin: 0;
+                    }
+                    .no-print {
+                        display: none;
+                    }
                 }
             </style>
         </head>
         <body>
             <div class="ticket">
                 <div class="logo-texto">EL IDEAL</div>
-                <p>Pollería & Salchipaperías</p>
-                <p>Arequipa - Perú</p>
-                <p>RUC: 20456789012</p>
+                <div class="empresa-info">Pollería & Salchipaperías</div>
+                <div class="empresa-info">Arequipa - Perú</div>
+                <div class="empresa-info">RUC: 20456789012</div>
                 <hr>
-                <p>${venta.fecha}</p>
+                <div class="fecha">📅 ${venta.fecha}</div>
                 <hr>
 
                 ${venta.items.map(item => `
@@ -940,7 +940,7 @@ function imprimirBoleta(venta) {
                         <span class="producto-cantidad">${item.cantidad}</span>
                         <span class="producto-precio">S/${item.total.toFixed(2)}</span>
                     </div>
-                    <div style="font-size: 13px; text-align: right; margin-top: -5px; margin-bottom: 5px;">
+                    <div class="precio-unitario">
                         (S/${item.precio.toFixed(2)} c/u)
                     </div>
                 `).join('')}
@@ -957,7 +957,7 @@ function imprimirBoleta(venta) {
                     <span class="resumen-valor">S/${venta.propina.toFixed(2)}</span>
                 </div>
                 ` : ''}
-                <div class="resumen-linea total">
+                <div class="resumen-linea total-linea">
                     <span class="resumen-label">TOTAL:</span>
                     <span class="resumen-valor">S/${venta.total.toFixed(2)}</span>
                 </div>
@@ -971,34 +971,31 @@ function imprimirBoleta(venta) {
                 <hr>
 
                 <div class="gracias">
-                    <p>¡Gracias por su compra!</p>
-                    <p>Vuelva pronto</p>
-                    <p>*** Fin del Comprobante ***</p>
+                    ¡Gracias por su compra!
+                </div>
+                <div class="fin">
+                    *** Fin del Comprobante ***
                 </div>
             </div>
-            
             <script>
-                let printed = false;
+                // Auto-imprimir al cargar
                 window.onload = function() {
+                    window.print();
+                    window.onafterprint = function() {
+                        window.close();
+                    };
+                    // Si el usuario cierra la ventana de impresión, igual cerrar
                     setTimeout(function() {
-                        if (!printed) {
-                            printed = true;
-                            window.print();
-                            setTimeout(function() {
-                                window.parent.document.body.removeChild(window.frameElement);
-                            }, 1000);
-                        }
-                    }, 200);
-                };
-                window.onafterprint = function() {
-                    window.parent.document.body.removeChild(window.frameElement);
+                        window.close();
+                    }, 1000);
                 };
             <\/script>
         </body>
         </html>
     `;
     
-    iframe.srcdoc = contenido;
+    ventanaImpresion.document.write(contenido);
+    ventanaImpresion.document.close();
 }
 
 // ==================== RESUMEN DEL DÍA ====================
@@ -1136,7 +1133,6 @@ function exportarCSV() {
     mostrarNotificacion("📥 Exportación Exitosa", "Archivo CSV generado correctamente");
 }
 
-// ==================== NOTIFICACIONES ====================
 function mostrarNotificacion(titulo, mensaje) {
     document.getElementById('notifTitulo').innerHTML = titulo;
     document.getElementById('notifMensaje').innerHTML = mensaje;
@@ -1151,7 +1147,7 @@ function cerrarModalNotificacion() {
     document.getElementById('modalNotificacion').style.display = 'none';
 }
 
-// ==================== EVENTOS DEL LOGIN ====================
+// Eventos del login
 document.getElementById('btnAcceder').onclick = verificarPassword;
 document.getElementById('btnCerrarSesion').onclick = cerrarSesion;
 document.getElementById('passwordInput').addEventListener('keypress', function(e) {
