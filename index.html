@@ -19,6 +19,95 @@ body {
     padding: 20px;
 }
 
+/* Pantalla de Login */
+.login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 350px;
+    animation: fadeInUp 0.5s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card h2 {
+    color: #ff6b35;
+    margin-bottom: 10px;
+}
+
+.login-card .logo {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.login-card input:focus {
+    border-color: #ff6b35;
+    outline: none;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-card button:hover {
+    transform: scale(1.02);
+}
+
+.error-msg {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+}
+
+/* Contenido principal (oculto hasta login) */
+.main-content {
+    display: none;
+}
+
 header {
     background: linear-gradient(135deg, #ff6b35, #f7931e);
     color: white;
@@ -27,6 +116,7 @@ header {
     border-radius: 15px;
     margin-bottom: 20px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
 }
 
 .container {
@@ -102,32 +192,6 @@ th {
 
 tr:hover {
     background: #f9f9f9;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.stat-card {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.stat-card h4 {
-    font-size: 12px;
-    opacity: 0.9;
-    margin-bottom: 5px;
-}
-
-.stat-card .value {
-    font-size: 24px;
-    font-weight: bold;
 }
 
 .badge {
@@ -208,17 +272,6 @@ tr:hover {
 @keyframes slideDown {
     from { transform: translateY(-50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
-}
-
-.stock-bajo {
-    color: #dc3545;
-    font-weight: bold;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
 }
 
 .historial-tabla {
@@ -310,6 +363,19 @@ tr:hover {
     margin-bottom: 5px;
 }
 
+.btn-cerrar-sesion {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: #dc3545;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.btn-cerrar-sesion:hover {
+    background: #c82333;
+}
+
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
@@ -317,99 +383,118 @@ tr:hover {
     .totales-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    .btn-cerrar-sesion {
+        position: relative;
+        margin-top: 10px;
+    }
 }
 </style>
 
 </head>
 <body>
 
-<header>
-    <h1> "El Ideal" - Arequipa</h1>
-    <p>Hecho por Angel</p>
-</header>
-
-<div class="container">
-    <!-- Panel de Venta -->
-    <div class="card">
-        <h2>🛒 Registrar Venta</h2>
-        
-        <input type="text" id="buscarProducto" class="buscar" placeholder="🔍 Buscar producto...">
-        
-        <select id="producto">
-            <!-- Los productos se cargarán dinámicamente -->
-        </select>
-        
-        <select id="cantidad"></select>
-        
-        <select id="metodoPago">
-            <option value="Efectivo">💵 Efectivo</option>
-            <option value="Yape">📱 Yape</option>
-            <option value="Plin">📱 Plin</option>
-            <option value="Tarjeta">💳 Tarjeta</option>
-        </select>
-        
-        <button onclick="agregarProducto()">➕ Agregar Producto</button>
-        <button onclick="abrirModalPropina()">💝 Agregar Propina</button>
-        
-        <h3 style="margin-top: 20px;">Venta Actual</h3>
-        <table>
-            <thead>
-                <tr><th>Producto</th><th>Precio</th><th>Cant</th><th>Total</th><th>Método</th><th>Acciones</th></tr>
-            </thead>
-            <tbody id="tablaVenta"></tbody>
-        </table>
-        
-        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-            <h3>Subtotal: S/ <span id="subtotal">0.00</span></h3>
-            <h3>Propina: S/ <span id="propina">0.00</span></h3>
-            <h3 style="color: #ff6b35;">💰 TOTAL: S/ <span id="totalGeneral">0.00</span></h3>
-        </div>
-        
-        <button onclick="finalizarVenta()" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 16px;">✅ Finalizar Venta e Imprimir</button>
-        <button onclick="cancelarVenta()" style="width: 100%; margin-top: 5px; background: #dc3545;">❌ Cancelar Venta</button>
+<!-- Pantalla de Login -->
+<div id="loginContainer" class="login-container">
+    <div class="login-card">
+        <div class="logo">🔒</div>
+        <h2>EL IDEAL</h2>
+        <p>Sistema de Ventas</p>
+        <input type="password" id="passwordInput" placeholder="Ingrese contraseña" autofocus>
+        <button id="btnAcceder">Acceder</button>
+        <div id="errorMsg" class="error-msg">❌ Contraseña incorrecta</div>
     </div>
-    
-    <!-- Panel de Estadísticas y Resumen del Día -->
-    <div>
+</div>
+
+<!-- Contenido Principal (oculto hasta login correcto) -->
+<div id="mainContent" class="main-content">
+    <header>
+        <h1>El</h1>
+        <h1>Ideal - Pollerias & Salchipaperias</h1>
+        <P>Hecho por Angel</p>
+        <button class="btn-cerrar-sesion" id="btnCerrarSesion">🚪 Cerrar Sesión</button>
+    </header>
+
+    <div class="container">
+        <!-- Panel de Venta -->
         <div class="card">
-            <h2>📊 Resumen de Ventas del Día</h2>
+            <h2>🛒 Registrar Venta</h2>
             
-            <!-- Totales del día -->
-            <div class="totales-dia">
-                <h3>💰 TOTAL GANADO HOY</h3>
-                <div class="totales-grid">
-                    <div class="total-item">
-                        <div class="label">💵 Efectivo</div>
-                        <div class="monto" id="totalEfectivoDia">S/0.00</div>
-                    </div>
-                    <div class="total-item">
-                        <div class="label">📱 Yape</div>
-                        <div class="monto" id="totalYapeDia">S/0.00</div>
-                    </div>
-                    <div class="total-item">
-                        <div class="label">📱 Plin</div>
-                        <div class="monto" id="totalPlinDia">S/0.00</div>
-                    </div>
-                    <div class="total-item">
-                        <div class="label">💳 Tarjeta</div>
-                        <div class="monto" id="totalTarjetaDia">S/0.00</div>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 2px solid rgba(255,255,255,0.3);">
-                    <strong>🎯 TOTAL GENERAL: S/ <span id="totalGeneralDia" style="font-size: 24px;">0.00</span></strong>
-                </div>
+            <input type="text" id="buscarProducto" class="buscar" placeholder="🔍 Buscar producto...">
+            
+            <select id="producto">
+                <option>Cargando productos...</option>
+            </select>
+            
+            <select id="cantidad"></select>
+            
+            <select id="metodoPago">
+                <option value="Efectivo">💵 Efectivo</option>
+                <option value="Yape">📱 Yape</option>
+                <option value="Plin">📱 Plin</option>
+                <option value="Tarjeta">💳 Tarjeta</option>
+            </select>
+            
+            <button id="btnAgregarProducto">➕ Agregar Producto</button>
+            <button id="btnAgregarPropina">💝 Agregar Propina</button>
+            
+            <h3 style="margin-top: 20px;">Venta Actual</h3>
+            <table>
+                <thead>
+                    <tr><th>Producto</th><th>Precio</th><th>Cant</th><th>Total</th><th>Método</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="tablaVenta"></tbody>
+            </table>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                <h3>Subtotal: S/ <span id="subtotal">0.00</span></h3>
+                <h3>Propina: S/ <span id="propina">0.00</span></h3>
+                <h3 style="color: #ff6b35;">💰 TOTAL: S/ <span id="totalGeneral">0.00</span></h3>
             </div>
             
-            <!-- Lista de ventas del día -->
-            <h3 style="margin-top: 20px;">📋 Ventas Realizadas Hoy</h3>
-            <div id="ventasDelDia" style="max-height: 400px; overflow-y: auto; margin-top: 10px;"></div>
+            <button id="btnFinalizarVenta" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 16px;">✅ Finalizar Venta e Imprimir</button>
+            <button id="btnCancelarVenta" style="width: 100%; margin-top: 5px; background: #dc3545;">❌ Cancelar Venta</button>
         </div>
         
-        <div class="card">
-            <h2>📜 Historial Completo de Ventas</h2>
-            <input type="date" id="filtroFecha" style="width: 100%; margin-bottom: 10px;">
-            <button onclick="exportarCSV()" style="background: #28a745; margin-bottom: 10px;">📥 Exportar a Excel</button>
-            <div id="historialVentas" style="max-height: 400px; overflow-y: auto;"></div>
+        <!-- Panel de Estadísticas y Resumen del Día -->
+        <div>
+            <div class="card">
+                <h2>📊 Resumen de Ventas del Día</h2>
+                
+                <div class="totales-dia">
+                    <h3>💰 TOTAL GANADO HOY</h3>
+                    <div class="totales-grid">
+                        <div class="total-item">
+                            <div class="label">💵 Efectivo</div>
+                            <div class="monto" id="totalEfectivoDia">S/0.00</div>
+                        </div>
+                        <div class="total-item">
+                            <div class="label">📱 Yape</div>
+                            <div class="monto" id="totalYapeDia">S/0.00</div>
+                        </div>
+                        <div class="total-item">
+                            <div class="label">📱 Plin</div>
+                            <div class="monto" id="totalPlinDia">S/0.00</div>
+                        </div>
+                        <div class="total-item">
+                            <div class="label">💳 Tarjeta</div>
+                            <div class="monto" id="totalTarjetaDia">S/0.00</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 2px solid rgba(255,255,255,0.3);">
+                        <strong>🎯 TOTAL GENERAL: S/ <span id="totalGeneralDia" style="font-size: 24px;">0.00</span></strong>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 20px;">📋 Ventas Realizadas Hoy</h3>
+                <div id="ventasDelDia" style="max-height: 400px; overflow-y: auto; margin-top: 10px;"></div>
+            </div>
+            
+            <div class="card">
+                <h2>📜 Historial Completo de Ventas</h2>
+                <input type="date" id="filtroFecha" style="width: 100%; margin-bottom: 10px;">
+                <button id="btnExportarCSV" style="background: #28a745; margin-bottom: 10px;">📥 Exportar a Excel</button>
+                <div id="historialVentas" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -419,8 +504,8 @@ tr:hover {
     <div class="modal-contenido">
         <h3>💝 Agregar Propina</h3>
         <input type="number" id="inputPropina" step="0.50" placeholder="Monto de propina" style="width: 100%; margin: 10px 0;">
-        <button onclick="agregarPropina()">Aplicar Propina</button>
-        <button onclick="cerrarModalPropina()">Cancelar</button>
+        <button id="btnAplicarPropina">Aplicar Propina</button>
+        <button id="btnCancelarPropina">Cancelar</button>
     </div>
 </div>
 
@@ -429,25 +514,63 @@ tr:hover {
     <div class="modal-contenido">
         <h3 id="notifTitulo">✅ Notificación</h3>
         <p id="notifMensaje"></p>
-        <button onclick="cerrarModalNotificacion()">Aceptar</button>
+        <button id="btnCerrarNotificacion">Aceptar</button>
     </div>
 </div>
 
 <script>
+// ==================== LOGIN ====================
+const CONTRASENA_CORRECTA = "hola.hols";
+
+function verificarPassword() {
+    let password = document.getElementById('passwordInput').value;
+    
+    if(password === CONTRASENA_CORRECTA) {
+        // Ocultar login y mostrar contenido
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        
+        // Inicializar el sistema DESPUÉS de mostrar el contenido
+        setTimeout(() => {
+            inicializarSistema();
+        }, 100);
+    } else {
+        // Mostrar error
+        let errorMsg = document.getElementById('errorMsg');
+        errorMsg.style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+        
+        // Ocultar error después de 3 segundos
+        setTimeout(() => {
+            errorMsg.style.display = 'none';
+        }, 3000);
+    }
+}
+
+function cerrarSesion() {
+    if(confirm("¿Estás seguro de cerrar sesión?")) {
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+}
+
 // ==================== DATOS DEL SISTEMA ====================
 let productos = [
-    { id: 1, nombre: "Cono escolar", precio: 2.00, stock: 50 },
-    { id: 2, nombre: "Salchicono", precio: 3.50, stock: 40 },
-    { id: 3, nombre: "Promoción", precio: 5.00, stock: 30 },
-    { id: 4, nombre: "Salchinuggets", precio: 6.00, stock: 25 },
-    { id: 5, nombre: "Salchipapa", precio: 9.00, stock: 20 },
-    { id: 6, nombre: "Royal", precio: 10.00, stock: 15 },
-    { id: 7, nombre: "Pollo broster", precio: 12.00, stock: 10 },
-    { id: 8, nombre: "Mega cono", precio: 10.00, stock: 18 },
-    { id: 9, nombre: "Salchipollo sandwich", precio: 5.00, stock: 22 },
-    { id: 10, nombre: "Chicha", precio: 2.00, stock: 60 },
-    { id: 11, nombre: "Agua", precio: 2.00, stock: 55 },
-    { id: 12, nombre: "Gaseosas", precio: 4.00, stock: 45 },
+    { id: 1, nombre: "Cono escolar", precio: 2.50, stock: 50 }, 
+    { id: 2, nombre: "Salchicono", precio: 4.00, stock: 50 },
+    { id: 3, nombre: "Promoción", precio: 5.00, stock: 50 },
+    { id: 4, nombre: "Cono nuggets", precio: 6.00, stock: 50 },
+    { id: 5, nombre: "Salchipapa", precio: 9.00, stock: 50 },
+    { id: 6, nombre: "Royal", precio: 10.00, stock: 50 },
+    { id: 7, nombre: "Salchi broster", precio: 12.00, stock: 50 },
+    { id: 8, nombre: "Mega cono", precio: 10.00, stock: 50 },
+    { id: 9, nombre: "Salchi Brasa", precio: 12.00, stock: 50 },
+    { id: 10, nombre: "Chicha Vaso", precio: 2.50, stock: 50 },
+    { id: 11, nombre: "Agua Cielo", precio: 2.00, stock: 50 },
+    { id: 12, nombre: "Gaseosas", precio: 4.00, stock: 50 },
     { id: 13, nombre: "Escocesa", precio: 3.00, stock: 35 },
     { id: 14, nombre: "Mini gaseosas", precio: 2.00, stock: 50 }
 ];
@@ -457,8 +580,36 @@ let propinaActual = 0;
 let historialVentas = JSON.parse(localStorage.getItem('historialVentas')) || [];
 
 // ==================== FUNCIONES DE INICIALIZACIÓN ====================
+function inicializarSistema() {
+    cargarProductos();
+    cargarCantidades();
+    actualizarResumenDelDia();
+    actualizarHistorial();
+    
+    // Eventos
+    document.getElementById('buscarProducto').addEventListener('input', function(e) {
+        cargarProductos(e.target.value);
+    });
+    
+    document.getElementById('producto').addEventListener('change', cargarCantidades);
+    document.getElementById('filtroFecha').addEventListener('change', actualizarHistorial);
+    
+    // Botones principales
+    document.getElementById('btnAgregarProducto').onclick = agregarProducto;
+    document.getElementById('btnAgregarPropina').onclick = abrirModalPropina;
+    document.getElementById('btnFinalizarVenta').onclick = finalizarVenta;
+    document.getElementById('btnCancelarVenta').onclick = cancelarVenta;
+    document.getElementById('btnExportarCSV').onclick = exportarCSV;
+    
+    // Botones modales
+    document.getElementById('btnAplicarPropina').onclick = agregarPropina;
+    document.getElementById('btnCancelarPropina').onclick = cerrarModalPropina;
+    document.getElementById('btnCerrarNotificacion').onclick = cerrarModalNotificacion;
+}
+
 function cargarProductos(filtro = "") {
     let select = document.getElementById('producto');
+    if(!select) return;
     select.innerHTML = '';
     
     let productosFiltrados = productos.filter(p => 
@@ -475,6 +626,7 @@ function cargarProductos(filtro = "") {
         }
         select.appendChild(option);
     });
+    cargarCantidades();
 }
 
 function cargarCantidades() {
@@ -499,14 +651,17 @@ function agregarProducto() {
     let cantidad = parseInt(document.getElementById('cantidad').value);
     let metodo = document.getElementById('metodoPago').value;
     
-    // Validar stock
+    if(!producto) {
+        mostrarNotificacion("❌ Error", "Producto no encontrado");
+        return;
+    }
+    
     if(cantidad > producto.stock) {
         mostrarNotificacion("❌ Error", `Stock insuficiente. Solo quedan ${producto.stock} unidades.`);
         return;
     }
     
-    // Verificar si ya existe en la venta actual
-    let existente = ventaActual.find(v => v.productoId === productoId && v.metodo === metodo);
+    let existente = ventaActual.find(v => v.productoId === productoId);
     
     if(existente) {
         let nuevaCantidad = existente.cantidad + cantidad;
@@ -527,7 +682,6 @@ function agregarProducto() {
         });
     }
     
-    // Descontar stock temporalmente
     producto.stock -= cantidad;
     
     actualizarTablaVenta();
@@ -537,6 +691,7 @@ function agregarProducto() {
 
 function actualizarTablaVenta() {
     let tbody = document.getElementById('tablaVenta');
+    if(!tbody) return;
     tbody.innerHTML = '';
     let subtotal = 0;
     
@@ -611,6 +766,7 @@ function eliminarProducto(index) {
 
 function abrirModalPropina() {
     document.getElementById('modalPropina').style.display = 'block';
+    document.getElementById('inputPropina').focus();
 }
 
 function cerrarModalPropina() {
@@ -636,23 +792,6 @@ function finalizarVenta() {
         return;
     }
     
-    // Determinar el método de pago único (tomamos el del primer producto)
-    let metodoUnico = ventaActual[0].metodo;
-    let metodoValido = true;
-    
-    // Verificar que todos los productos tengan el mismo método de pago
-    for(let i = 1; i < ventaActual.length; i++) {
-        if(ventaActual[i].metodo !== metodoUnico) {
-            metodoValido = false;
-            break;
-        }
-    }
-    
-    if(!metodoValido) {
-        mostrarNotificacion("⚠️ Métodos Mixtos", "Todos los productos deben usar el mismo método de pago. Por favor, unifique el método de pago.");
-        return;
-    }
-    
     let subtotal = parseFloat(document.getElementById('subtotal').innerText);
     let totalGeneral = subtotal + propinaActual;
     
@@ -664,16 +803,14 @@ function finalizarVenta() {
         subtotal: subtotal,
         propina: propinaActual,
         total: totalGeneral,
-        metodoPago: metodoUnico
+        metodoPago: ventaActual[0].metodo
     };
     
-    historialVentas.unshift(ventaCompleta); // Agregar al inicio para mostrar más reciente primero
+    historialVentas.unshift(ventaCompleta);
     localStorage.setItem('historialVentas', JSON.stringify(historialVentas));
     
-    // Imprimir boleta
     imprimirBoleta(ventaCompleta);
     
-    // Resetear venta actual
     ventaActual = [];
     propinaActual = 0;
     actualizarTablaVenta();
@@ -686,7 +823,6 @@ function finalizarVenta() {
 
 function cancelarVenta() {
     if(confirm("¿Estás seguro de cancelar la venta? Se restaurará el stock.")) {
-        // Restaurar stock
         ventaActual.forEach(item => {
             let producto = productos.find(p => p.id === item.productoId);
             if(producto) producto.stock += item.cantidad;
@@ -700,6 +836,120 @@ function cancelarVenta() {
     }
 }
 
+// ==================== IMPRESIÓN OPTIMIZADA ====================
+function imprimirBoleta(venta) {
+    let iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0px';
+    iframe.style.height = '0px';
+    iframe.style.border = 'none';
+    document.body.appendChild(iframe);
+    
+    let iconoMetodo = {
+        'Efectivo': '💵',
+        'Yape': '📱',
+        'Plin': '📱',
+        'Tarjeta': '💳'
+    };
+    
+    let contenido = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Boleta - El Ideal</title>
+            <style>
+                @media print {
+                    body {
+                        width: 80mm;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .ticket {
+                        width: 72mm;
+                        margin: 0 auto;
+                        font-size: 12px;
+                        font-family: monospace;
+                        padding: 5px;
+                    }
+                }
+                .ticket {
+                    font-family: monospace;
+                    width: 72mm;
+                    margin: 0 auto;
+                }
+                hr {
+                    border: none;
+                    border-top: 1px dashed #000;
+                    margin: 5px 0;
+                }
+                .text-center {
+                    text-align: center;
+                }
+                .total {
+                    font-weight: bold;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="ticket">
+                <div class="text-center">
+                    <h3>EL</h3>
+                    <p>Ideal - Polleria & Salchipaperias</p>
+                    <p>Arequipa - Perú</p>
+                    <p>RUC: 20456789012</p>
+                    <hr>
+                    <p>${venta.fecha}</p>
+                    <hr>
+                </div>
+
+                ${venta.items.map(item => `
+                    <p>${item.producto.padEnd(20)} ${item.cantidad} x S/${item.precio.toFixed(2)} = S/${item.total.toFixed(2)}</p>
+                `).join('')}
+
+                <hr>
+
+                <p>Subtotal: S/${venta.subtotal.toFixed(2)}</p>
+                ${venta.propina > 0 ? `<p>Propina: S/${venta.propina.toFixed(2)}</p>` : ''}
+                <p class="total">TOTAL: S/${venta.total.toFixed(2)}</p>
+                
+                <hr>
+                
+                <p class="text-center">${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}</p>
+                
+                <hr>
+
+                <div class="text-center">
+                    <p>¡Gracias por su compra!</p>
+                    <p>Vuelva pronto</p>
+                    <p>*** Fin del Comprobante ***</p>
+                </div>
+            </div>
+            
+            <script>
+                let printed = false;
+                window.onload = function() {
+                    setTimeout(function() {
+                        if (!printed) {
+                            printed = true;
+                            window.print();
+                            setTimeout(function() {
+                                window.parent.document.body.removeChild(window.frameElement);
+                            }, 1000);
+                        }
+                    }, 200);
+                };
+                window.onafterprint = function() {
+                    window.parent.document.body.removeChild(window.frameElement);
+                };
+            <\/script>
+        </body>
+        </html>
+    `;
+    
+    iframe.srcdoc = contenido;
+}
+
 // ==================== RESUMEN DEL DÍA ====================
 function actualizarResumenDelDia() {
     let hoy = new Date();
@@ -711,7 +961,6 @@ function actualizarResumenDelDia() {
         return fechaVenta.getTime() === hoy.getTime();
     });
     
-    // Calcular totales por método de pago
     let totales = {
         Efectivo: 0,
         Yape: 0,
@@ -725,14 +974,12 @@ function actualizarResumenDelDia() {
         totales.General += venta.total;
     });
     
-    // Actualizar los totales en la interfaz
     document.getElementById('totalEfectivoDia').innerText = `S/${totales.Efectivo.toFixed(2)}`;
     document.getElementById('totalYapeDia').innerText = `S/${totales.Yape.toFixed(2)}`;
     document.getElementById('totalPlinDia').innerText = `S/${totales.Plin.toFixed(2)}`;
     document.getElementById('totalTarjetaDia').innerText = `S/${totales.Tarjeta.toFixed(2)}`;
     document.getElementById('totalGeneralDia').innerText = `${totales.General.toFixed(2)}`;
     
-    // Mostrar lista de ventas del día
     let ventasDiv = document.getElementById('ventasDelDia');
     
     if(ventasHoy.length === 0) {
@@ -754,64 +1001,6 @@ function actualizarResumenDelDia() {
             </div>
         </div>
     `).join('');
-}
-
-// ==================== IMPRESIÓN ====================
-function imprimirBoleta(venta) {
-    let iconoMetodo = {
-        'Efectivo': '💵',
-        'Yape': '📱',
-        'Plin': '📱',
-        'Tarjeta': '💳'
-    };
-    
-    let contenido = `
-        <div style="font-family: monospace; width: 300px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center;">
-                <h3>EL IDEAL</h3>
-                <p>Fast & Food<br>
-                Calle San Francisco 308, Cercado<br>
-                Arequipa - Perú<br>
-                ${venta.fecha}</p>
-            </div>
-            <hr>
-            <table style="width: 100%; font-size: 12px;">
-                <thead>
-                    <tr>
-                        <th>Prod</th>
-                        <th>Cant</th>
-                        <th>Precio</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${venta.items.map(item => `
-                        <tr>
-                            <td>${item.producto}</td>
-                            <td style="text-align:center">${item.cantidad}</td>
-                            <td style="text-align:right">S/${item.precio.toFixed(2)}</td>
-                            <td style="text-align:right">S/${item.total.toFixed(2)}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-            <hr>
-            <div style="text-align: right;">
-                <p>Subtotal: S/${venta.subtotal.toFixed(2)}</p>
-                ${venta.propina > 0 ? `<p>Propina: S/${venta.propina.toFixed(2)}</p>` : ''}
-                <p><strong>TOTAL: S/${venta.total.toFixed(2)}</strong></p>
-                <hr>
-                <p><strong>${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}</strong></p>
-            </div>
-            <hr>
-            <p style="text-align: center;">¡Gracias por su preferencia!<br>Vuelva pronto</p>
-        </div>
-    `;
-    
-    let ventana = window.open('', '', 'width=350,height=600');
-    ventana.document.write(contenido);
-    ventana.document.close();
-    ventana.print();
 }
 
 // ==================== HISTORIAL ====================
@@ -891,7 +1080,7 @@ function exportarCSV() {
     let blob = new Blob([csv], { type: 'text/csv' });
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `ventas_arequipa_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `ventas_el_ideal_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     mostrarNotificacion("📥 Exportación Exitosa", "Archivo CSV generado correctamente");
 }
@@ -911,19 +1100,14 @@ function cerrarModalNotificacion() {
     document.getElementById('modalNotificacion').style.display = 'none';
 }
 
-// ==================== EVENTOS ====================
-document.getElementById('buscarProducto').addEventListener('input', function(e) {
-    cargarProductos(e.target.value);
+// ==================== EVENTOS DEL LOGIN ====================
+document.getElementById('btnAcceder').onclick = verificarPassword;
+document.getElementById('btnCerrarSesion').onclick = cerrarSesion;
+document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+    if(e.key === 'Enter') {
+        verificarPassword();
+    }
 });
-
-document.getElementById('producto').addEventListener('change', cargarCantidades);
-document.getElementById('filtroFecha').addEventListener('change', actualizarHistorial);
-
-// Inicializar
-cargarProductos();
-cargarCantidades();
-actualizarResumenDelDia();
-actualizarHistorial();
 
 </script>
 
