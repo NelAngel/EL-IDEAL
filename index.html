@@ -559,20 +559,26 @@ function cerrarSesion() {
 
 // ==================== DATOS DEL SISTEMA ====================
 let productos = [
-    { id: 1, nombre: "Cono escolar", precio: 2.50, stock: 50 }, 
-    { id: 2, nombre: "Salchicono", precio: 4.00, stock: 50 },
-    { id: 3, nombre: "Promoción", precio: 5.00, stock: 50 },
-    { id: 4, nombre: "Cono nuggets", precio: 6.00, stock: 50 },
-    { id: 5, nombre: "Salchipapa", precio: 9.00, stock: 50 },
-    { id: 6, nombre: "Royal", precio: 10.00, stock: 50 },
-    { id: 7, nombre: "Salchi broster", precio: 12.00, stock: 50 },
-    { id: 8, nombre: "Mega cono", precio: 10.00, stock: 50 },
-    { id: 9, nombre: "Salchi Brasa", precio: 12.00, stock: 50 },
-    { id: 10, nombre: "Chicha Vaso", precio: 2.50, stock: 50 },
-    { id: 11, nombre: "Agua Cielo", precio: 2.00, stock: 50 },
-    { id: 12, nombre: "Gaseosas", precio: 4.00, stock: 50 },
-    { id: 13, nombre: "Escocesa", precio: 3.00, stock: 35 },
-    { id: 14, nombre: "Mini gaseosas", precio: 2.00, stock: 50 }
+    { id: 1, nombre: "Cono escolar", precio: 2.50 }, 
+    { id: 2, nombre: "Salchicono", precio: 4.00 },
+    { id: 3, nombre: "Promoción", precio: 5.00 },
+    { id: 4, nombre: "Cono nuggets", precio: 6.50 },
+    { id: 5, nombre: "Salchipapa", precio: 9.00 },
+    { id: 6, nombre: "Royal", precio: 10.00 },
+    { id: 7, nombre: "Salchi broster", precio: 12.00 },
+    { id: 8, nombre: "Mega cono", precio: 9.00 },
+    { id: 9, nombre: "Salchi Brasa", precio: 12.00 },
+    { id: 10, nombre: "Chicha Vaso", precio: 2.50 },
+    { id: 11, nombre: "Agua Cielo", precio: 2.00 },
+    { id: 12, nombre: "Gaseosas", precio: 4.00 },
+    { id: 13, nombre: "Escocesa", precio: 3.00},
+    { id: 14, nombre: "Mini gaseosas", precio: 2.00},
+    { id: 15, nombre: "Jarra Chicha", precio: 6.00},
+    { id: 16, nombre: "Alitas Broster", precio: 13.00},
+    { id: 17, nombre: "Alitas BBQ", precio: 13.00},
+    { id: 18, nombre: "Salchi Mozarella", precio: 13.00},
+    { id: 19, nombre: "Gaseosa 2.5L", precio: 15.00},
+    { id: 20, nombre: "Gaseosa de Vidrio", precio: 8.00}
 ];
 
 let ventaActual = [];
@@ -619,11 +625,7 @@ function cargarProductos(filtro = "") {
     productosFiltrados.forEach(producto => {
         let option = document.createElement('option');
         option.value = producto.id;
-        option.textContent = `${producto.nombre} - S/${producto.precio.toFixed(2)} (Stock: ${producto.stock})`;
-        if(producto.stock < 5) {
-            option.style.color = '#dc3545';
-            option.style.fontWeight = 'bold';
-        }
+        option.textContent = `${producto.nombre} - S/${producto.precio.toFixed(2)}`;
         select.appendChild(option);
     });
     cargarCantidades();
@@ -631,12 +633,8 @@ function cargarProductos(filtro = "") {
 
 function cargarCantidades() {
     let selectCantidad = document.getElementById('cantidad');
-    let productoId = parseInt(document.getElementById('producto').value);
-    let producto = productos.find(p => p.id === productoId);
-    let maxStock = producto ? producto.stock : 20;
-    
     selectCantidad.innerHTML = '';
-    for(let i = 1; i <= Math.min(maxStock, 20); i++) {
+    for(let i = 1; i <= 20; i++) {
         let option = document.createElement('option');
         option.value = i;
         option.textContent = i;
@@ -656,21 +654,11 @@ function agregarProducto() {
         return;
     }
     
-    if(cantidad > producto.stock) {
-        mostrarNotificacion("❌ Error", `Stock insuficiente. Solo quedan ${producto.stock} unidades.`);
-        return;
-    }
-    
     let existente = ventaActual.find(v => v.productoId === productoId);
     
     if(existente) {
-        let nuevaCantidad = existente.cantidad + cantidad;
-        if(nuevaCantidad > producto.stock + existente.cantidad) {
-            mostrarNotificacion("❌ Error", "No hay suficiente stock disponible");
-            return;
-        }
-        existente.cantidad = nuevaCantidad;
-        existente.total = existente.precio * nuevaCantidad;
+        existente.cantidad += cantidad;
+        existente.total = existente.precio * existente.cantidad;
     } else {
         ventaActual.push({
             productoId: producto.id,
@@ -682,10 +670,7 @@ function agregarProducto() {
         });
     }
     
-    producto.stock -= cantidad;
-    
     actualizarTablaVenta();
-    cargarProductos(document.getElementById('buscarProducto').value);
     mostrarNotificacion("✅ Producto Agregado", `${cantidad}x ${producto.nombre} agregado (${metodo})`);
 }
 
@@ -725,42 +710,21 @@ function editarCantidad(index) {
     let nuevaCantidad = prompt("Nueva cantidad:", ventaActual[index].cantidad);
     if(nuevaCantidad && !isNaN(nuevaCantidad)) {
         nuevaCantidad = parseInt(nuevaCantidad);
-        let productoOriginal = productos.find(p => p.id === ventaActual[index].productoId);
-        let diferencia = nuevaCantidad - ventaActual[index].cantidad;
-        
-        if(diferencia > 0 && diferencia > productoOriginal.stock) {
-            mostrarNotificacion("❌ Error", "Stock insuficiente");
-            return;
-        }
-        
-        productoOriginal.stock -= diferencia;
         ventaActual[index].cantidad = nuevaCantidad;
         ventaActual[index].total = ventaActual[index].precio * nuevaCantidad;
-        
         actualizarTablaVenta();
-        cargarProductos(document.getElementById('buscarProducto').value);
     }
 }
 
 function aumentarCantidad(index) {
-    let productoOriginal = productos.find(p => p.id === ventaActual[index].productoId);
-    if(productoOriginal.stock > 0) {
-        productoOriginal.stock--;
-        ventaActual[index].cantidad++;
-        ventaActual[index].total = ventaActual[index].precio * ventaActual[index].cantidad;
-        actualizarTablaVenta();
-        cargarProductos(document.getElementById('buscarProducto').value);
-    } else {
-        mostrarNotificacion("❌ Error", "Stock agotado");
-    }
+    ventaActual[index].cantidad++;
+    ventaActual[index].total = ventaActual[index].precio * ventaActual[index].cantidad;
+    actualizarTablaVenta();
 }
 
 function eliminarProducto(index) {
-    let productoOriginal = productos.find(p => p.id === ventaActual[index].productoId);
-    productoOriginal.stock += ventaActual[index].cantidad;
     ventaActual.splice(index, 1);
     actualizarTablaVenta();
-    cargarProductos(document.getElementById('buscarProducto').value);
     mostrarNotificacion("🗑️ Producto Eliminado", "El producto ha sido removido");
 }
 
@@ -814,7 +778,6 @@ function finalizarVenta() {
     ventaActual = [];
     propinaActual = 0;
     actualizarTablaVenta();
-    cargarProductos();
     actualizarResumenDelDia();
     actualizarHistorial();
     
@@ -822,21 +785,15 @@ function finalizarVenta() {
 }
 
 function cancelarVenta() {
-    if(confirm("¿Estás seguro de cancelar la venta? Se restaurará el stock.")) {
-        ventaActual.forEach(item => {
-            let producto = productos.find(p => p.id === item.productoId);
-            if(producto) producto.stock += item.cantidad;
-        });
-        
+    if(confirm("¿Estás seguro de cancelar la venta?")) {
         ventaActual = [];
         propinaActual = 0;
         actualizarTablaVenta();
-        cargarProductos();
         mostrarNotificacion("🔄 Venta Cancelada", "Se ha cancelado la venta actual");
     }
 }
 
-// ==================== IMPRESIÓN OPTIMIZADA ====================
+// ==================== IMPRESIÓN MEJORADA (Letra grande y centrada) ====================
 function imprimirBoleta(venta) {
     let iframe = document.createElement('iframe');
     iframe.style.position = 'absolute';
@@ -861,65 +818,159 @@ function imprimirBoleta(venta) {
             <style>
                 @media print {
                     body {
-                        width: 80mm;
                         margin: 0;
-                        padding: 0;
+                        padding: 20px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        min-height: 100vh;
                     }
                     .ticket {
-                        width: 72mm;
+                        width: 100%;
+                        max-width: 90mm;
                         margin: 0 auto;
-                        font-size: 12px;
+                        font-size: 16px;
                         font-family: monospace;
-                        padding: 5px;
+                        text-align: center;
                     }
                 }
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                body {
+                    font-family: 'Courier New', monospace;
+                    background: white;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    padding: 20px;
+                }
                 .ticket {
-                    font-family: monospace;
-                    width: 72mm;
+                    width: 100%;
+                    max-width: 90mm;
                     margin: 0 auto;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    text-align: center;
                 }
                 hr {
                     border: none;
-                    border-top: 1px dashed #000;
-                    margin: 5px 0;
+                    border-top: 2px dashed #000;
+                    margin: 10px 0;
                 }
                 .text-center {
                     text-align: center;
                 }
                 .total {
                     font-weight: bold;
+                    font-size: 20px;
+                }
+                .producto-linea {
+                    text-align: left;
+                    margin: 8px 0;
+                    font-size: 15px;
+                }
+                .producto-nombre {
+                    display: inline-block;
+                    width: 55%;
+                }
+                .producto-cantidad {
+                    display: inline-block;
+                    width: 15%;
+                    text-align: center;
+                }
+                .producto-precio {
+                    display: inline-block;
+                    width: 28%;
+                    text-align: right;
+                }
+                .resumen-linea {
+                    text-align: right;
+                    margin: 5px 0;
+                    font-size: 16px;
+                }
+                .resumen-label {
+                    display: inline-block;
+                    width: 70%;
+                    text-align: right;
+                }
+                .resumen-valor {
+                    display: inline-block;
+                    width: 28%;
+                    text-align: right;
+                    font-weight: bold;
+                }
+                .metodo-pago {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin: 10px 0;
+                }
+                .gracias {
+                    margin-top: 15px;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                h3 {
+                    font-size: 22px;
+                    margin: 5px 0;
+                }
+                .logo-texto {
+                    font-size: 24px;
+                    font-weight: bold;
+                    letter-spacing: 2px;
                 }
             </style>
         </head>
         <body>
             <div class="ticket">
-                <div class="text-center">
-                    <h3>EL</h3>
-                    <p>Ideal - Polleria & Salchipaperias</p>
-                    <p>Arequipa - Perú</p>
-                    <p>RUC: 20456789012</p>
-                    <hr>
-                    <p>${venta.fecha}</p>
-                    <hr>
-                </div>
+                <div class="logo-texto">EL IDEAL</div>
+                <p>Pollería & Salchipaperías</p>
+                <p>Arequipa - Perú</p>
+                <p>RUC: 20456789012</p>
+                <hr>
+                <p>${venta.fecha}</p>
+                <hr>
 
                 ${venta.items.map(item => `
-                    <p>${item.producto.padEnd(20)} ${item.cantidad} x S/${item.precio.toFixed(2)} = S/${item.total.toFixed(2)}</p>
+                    <div class="producto-linea">
+                        <span class="producto-nombre">${item.producto}</span>
+                        <span class="producto-cantidad">${item.cantidad}</span>
+                        <span class="producto-precio">S/${item.total.toFixed(2)}</span>
+                    </div>
+                    <div style="font-size: 13px; text-align: right; margin-top: -5px; margin-bottom: 5px;">
+                        (S/${item.precio.toFixed(2)} c/u)
+                    </div>
                 `).join('')}
 
                 <hr>
 
-                <p>Subtotal: S/${venta.subtotal.toFixed(2)}</p>
-                ${venta.propina > 0 ? `<p>Propina: S/${venta.propina.toFixed(2)}</p>` : ''}
-                <p class="total">TOTAL: S/${venta.total.toFixed(2)}</p>
+                <div class="resumen-linea">
+                    <span class="resumen-label">Subtotal:</span>
+                    <span class="resumen-valor">S/${venta.subtotal.toFixed(2)}</span>
+                </div>
+                ${venta.propina > 0 ? `
+                <div class="resumen-linea">
+                    <span class="resumen-label">Propina:</span>
+                    <span class="resumen-valor">S/${venta.propina.toFixed(2)}</span>
+                </div>
+                ` : ''}
+                <div class="resumen-linea total">
+                    <span class="resumen-label">TOTAL:</span>
+                    <span class="resumen-valor">S/${venta.total.toFixed(2)}</span>
+                </div>
                 
                 <hr>
                 
-                <p class="text-center">${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}</p>
+                <div class="metodo-pago">
+                    ${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}
+                </div>
                 
                 <hr>
 
-                <div class="text-center">
+                <div class="gracias">
                     <p>¡Gracias por su compra!</p>
                     <p>Vuelva pronto</p>
                     <p>*** Fin del Comprobante ***</p>
