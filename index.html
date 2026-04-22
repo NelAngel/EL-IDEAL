@@ -14,7 +14,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #b6b8c2 0%, #d1d1d1 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -26,7 +26,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, hsl(0, 100%, 62%) 0%, #ffd9d9 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,7 +82,7 @@ body {
 .login-card button {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    background: linear-gradient(135deg, #fff1ec, #ff2020);
     color: white;
     border: none;
     border-radius: 10px;
@@ -108,15 +108,89 @@ body {
     display: none;
 }
 
+/* CABECERA CON LOGO - MODIFICADA */
 header {
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    background: linear-gradient(135deg, #ff0000, #ff0000);
     color: white;
     padding: 20px;
-    text-align: center;
     border-radius: 15px;
     margin-bottom: 20px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Contenedor del título y texto */
+.header-titles {
+    flex: 1;
+    text-align: center;
+}
+
+.header-titles h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.header-titles p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Contenedor del logo */
+.logo-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.logo-container:hover {
+    transform: scale(1.05);
+}
+
+.logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ajusta la imagen para que cubra el círculo sin deformarse */
+}
+
+/* Texto de ejemplo si no hay imagen */
+.logo-placeholder {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* Botón cerrar sesión */
+.btn-cerrar-sesion {
+    background: #c3bfbf;
+    padding: 8px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-cerrar-sesion:hover {
+    background: #c82333;
+    transform: scale(1.02);
+    color: white;
 }
 
 .container {
@@ -349,7 +423,7 @@ tr:hover {
     margin-top: 5px;
 }
 
-.venta-dia-item {
+.venta-dia-item {   
     background: #f8f9fa;
     margin-bottom: 10px;
     padding: 10px;
@@ -363,19 +437,6 @@ tr:hover {
     margin-bottom: 5px;
 }
 
-.btn-cerrar-sesion {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: #dc3545;
-    padding: 8px 15px;
-    font-size: 14px;
-}
-
-.btn-cerrar-sesion:hover {
-    background: #c82333;
-}
-
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
@@ -383,9 +444,21 @@ tr:hover {
     .totales-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    /* Ajustes responsivos para la cabecera con logo */
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .logo-container {
+        width: 60px;
+        height: 60px;
+    }
+    .header-titles h1 {
+        font-size: 1.4rem;
+    }
     .btn-cerrar-sesion {
-        position: relative;
-        margin-top: 10px;
+        align-self: center;
     }
 }
 </style>
@@ -394,11 +467,14 @@ tr:hover {
 <body>
 
 <!-- Pantalla de Login -->
+<!-- Pantalla de Login con logo -->
 <div id="loginContainer" class="login-container">
     <div class="login-card">
-        <div class="logo">🔒</div>
-        <h2>EL IDEAL</h2>
-        <p>Sistema de Ventas</p>
+        <div class="logo">
+            <!-- CAMBIA "ruta/de/tu/logo.png" por la ruta real de tu imagen -->
+            <img src="1.jpg" alt="Logo El Ideal" style="width: 80px; height: 80px; object-fit: contain; border-radius: 50%; background: white; padding: 2px;">
+        </div>
+        <h2>INGRESA SU CONTRASEÑA</h2>
         <input type="password" id="passwordInput" placeholder="Ingrese contraseña" autofocus>
         <button id="btnAcceder">Acceder</button>
         <div id="errorMsg" class="error-msg">❌ Contraseña incorrecta</div>
@@ -408,9 +484,32 @@ tr:hover {
 <!-- Contenido Principal (oculto hasta login correcto) -->
 <div id="mainContent" class="main-content">
     <header>
-        <h1>El</h1>
-        <h1>Ideal - Pollerias & Salchipaperias</h1>
-        <P>Hecho por Angel</p>
+        <!-- Contenedor para el LOGO (IZQUIERDA) -->
+        <div class="logo-container" id="logoEmpresa">
+            <!-- 
+                ⭐ INSTRUCCIONES PARA PONER TU LOGO REAL:
+                1. Reemplaza "ruta/de/tu/logo.png" con la ruta correcta de tu imagen.
+                2. Si la imagen está en la misma carpeta que este archivo, solo pon el nombre (ej: "mi-logo.png").
+                3. Formatos soportados: PNG, JPG, JPEG, GIF, SVG.
+                4. Si no pones una imagen, se verá un texto de ejemplo "🍗" como respaldo.
+                
+                Ejemplo de uso con imagen local:
+                <img src="logo-empresa.png" alt="Logo El Ideal">
+                
+                Ejemplo con imagen de internet (si tienes la URL):
+                <img src="https://tusitio.com/imagenes/logo-ideal.png" alt="Logo El Ideal">
+            -->
+            <img src="1.jpg" alt="Logo El Ideal" id="logoImg" style="width:100%; height:100%; object-fit:cover;">
+            <!-- El placeholder de arriba es solo un ejemplo. Cámbialo por tu imagen real -->
+        </div>
+
+        <!-- Contenedor del título y créditos (CENTRO) -->
+        <div class="header-titles">
+            <h1>El Ideal - Pollerías & Salchipaperías</h1>
+            <p>Hecho por Angel</p>
+        </div>
+        
+        <!-- Botón de cerrar sesión (DERECHA) -->
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">🚪 Cerrar Sesión</button>
     </header>
 
@@ -519,25 +618,38 @@ tr:hover {
 </div>
 
 <script>
-// ==================== LOGIN ====================
+// ==================== LOGIN CON SESIÓN PERSISTENTE ====================
 const CONTRASENA_CORRECTA = "hola.hols";
+const SESION_KEY = "sesion_iniciada";
 
-function verificarPassword() {
+// Verificar si ya hay una sesión activa al cargar la página
+function verificarSesionExistente() {
+    const sesionActiva = sessionStorage.getItem(SESION_KEY);
+    if (sesionActiva === "true") {
+        // Sesión existente, mostrar contenido directamente
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        inicializarSistema();
+        return true;
+    }
+    return false;
+}
+
+function iniciarSesion() {
     let password = document.getElementById('passwordInput').value;
     
     if(password === CONTRASENA_CORRECTA) {
+        sessionStorage.setItem(SESION_KEY, "true");
         document.getElementById('loginContainer').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
-        
-        setTimeout(() => {
-            inicializarSistema();
-        }, 100);
+        inicializarSistema();
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('errorMsg').style.display = 'none';
     } else {
         let errorMsg = document.getElementById('errorMsg');
         errorMsg.style.display = 'block';
         document.getElementById('passwordInput').value = '';
         document.getElementById('passwordInput').focus();
-        
         setTimeout(() => {
             errorMsg.style.display = 'none';
         }, 3000);
@@ -546,10 +658,13 @@ function verificarPassword() {
 
 function cerrarSesion() {
     if(confirm("¿Estás seguro de cerrar sesión?")) {
+        sessionStorage.removeItem(SESION_KEY);
         document.getElementById('loginContainer').style.display = 'flex';
         document.getElementById('mainContent').style.display = 'none';
         document.getElementById('passwordInput').value = '';
         document.getElementById('errorMsg').style.display = 'none';
+        ventaActual = [];
+        propinaActual = 0;
     }
 }
 
@@ -575,7 +690,7 @@ let productos = [
     { id: 18, nombre: "Salchi Mozarella", precio: 13.00},
     { id: 19, nombre: "Gaseosa 2.5L", precio: 15.00},
     { id: 20, nombre: "Gaseosa de Vidrio", precio: 8.00},
-    { id: 21, nombre: "Mounstrito", precio: 14.00}
+    { id: 21, nombre: "Mounstrito", precio: 14.00}  
 ];
 
 let ventaActual = [];
@@ -589,12 +704,23 @@ function inicializarSistema() {
     actualizarResumenDelDia();
     actualizarHistorial();
     
-    document.getElementById('buscarProducto').addEventListener('input', function(e) {
+    const buscarInput = document.getElementById('buscarProducto');
+    const productoSelect = document.getElementById('producto');
+    const filtroFecha = document.getElementById('filtroFecha');
+    
+    const nuevoBuscar = buscarInput.cloneNode(true);
+    buscarInput.parentNode.replaceChild(nuevoBuscar, buscarInput);
+    nuevoBuscar.addEventListener('input', function(e) {
         cargarProductos(e.target.value);
     });
     
-    document.getElementById('producto').addEventListener('change', cargarCantidades);
-    document.getElementById('filtroFecha').addEventListener('change', actualizarHistorial);
+    const nuevoProducto = productoSelect.cloneNode(true);
+    productoSelect.parentNode.replaceChild(nuevoProducto, productoSelect);
+    nuevoProducto.addEventListener('change', cargarCantidades);
+    
+    const nuevoFiltro = filtroFecha.cloneNode(true);
+    filtroFecha.parentNode.replaceChild(nuevoFiltro, filtroFecha);
+    nuevoFiltro.addEventListener('change', actualizarHistorial);
     
     document.getElementById('btnAgregarProducto').onclick = agregarProducto;
     document.getElementById('btnAgregarPropina').onclick = abrirModalPropina;
@@ -627,6 +753,7 @@ function cargarProductos(filtro = "") {
 
 function cargarCantidades() {
     let selectCantidad = document.getElementById('cantidad');
+    if(!selectCantidad) return;
     selectCantidad.innerHTML = '';
     for(let i = 1; i <= 20; i++) {
         let option = document.createElement('option');
@@ -693,7 +820,6 @@ function actualizarTablaVenta() {
     });
     
     let totalGeneral = subtotal + propinaActual;
-    
     document.getElementById('subtotal').innerText = subtotal.toFixed(2);
     document.getElementById('propina').innerText = propinaActual.toFixed(2);
     document.getElementById('totalGeneral').innerText = totalGeneral.toFixed(2);
@@ -765,15 +891,12 @@ function finalizarVenta() {
     
     historialVentas.unshift(ventaCompleta);
     localStorage.setItem('historialVentas', JSON.stringify(historialVentas));
-    
     imprimirBoleta(ventaCompleta);
-    
     ventaActual = [];
     propinaActual = 0;
     actualizarTablaVenta();
     actualizarResumenDelDia();
     actualizarHistorial();
-    
     mostrarNotificacion("✅ Venta Completada", `Venta por S/${totalGeneral.toFixed(2)} registrada exitosamente`);
 }
 
@@ -786,346 +909,46 @@ function cancelarVenta() {
     }
 }
 
-// ==================== IMPRESIÓN CORREGIDA - Ya no se repite ====================
+// ==================== IMPRESIÓN ====================
 function imprimirBoleta(venta) {
-    // Crear el contenido de la boleta en una ventana nueva
-    let ventanaImpresion = window.open('', '_blank', 'width=400,height=600,toolbar=no,menubar=no');
-    
-    let iconoMetodo = {
-        'Efectivo': '💵',
-        'Yape': '📱',
-        'Plin': '📱',
-        'Tarjeta': '💳'
-    };
-    
-    let contenido = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Boleta - El Ideal</title>
-            <style>
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-                body {
-                    font-family: 'Courier New', monospace;
-                    background: white;
-                    padding: 30px 20px;
-                    display: flex;
-                    justify-content: center;
-                    min-height: 100vh;
-                }
-                .ticket {
-                    width: 100%;
-                    max-width: 350px;
-                    margin: 0 auto;
-                    font-size: 18px;
-                    line-height: 1.8;
-                    text-align: center;
-                }
-                hr {
-                    border: none;
-                    border-top: 2px dashed #000;
-                    margin: 15px 0;
-                }
-                .logo-texto {
-                    font-size: 28px;
-                    font-weight: bold;
-                    letter-spacing: 3px;
-                    margin-bottom: 10px;
-                }
-                .empresa-info {
-                    font-size: 16px;
-                    margin: 5px 0;
-                }
-                .fecha {
-                    font-size: 16px;
-                    margin: 10px 0;
-                }
-                .producto-linea {
-                    text-align: left;
-                    margin: 12px 0;
-                    font-size: 17px;
-                }
-                .producto-nombre {
-                    display: inline-block;
-                    width: 55%;
-                    font-weight: normal;
-                }
-                .producto-cantidad {
-                    display: inline-block;
-                    width: 15%;
-                    text-align: center;
-                }
-                .producto-precio {
-                    display: inline-block;
-                    width: 28%;
-                    text-align: right;
-                    font-weight: bold;
-                }
-                .precio-unitario {
-                    font-size: 14px;
-                    text-align: right;
-                    margin-top: -8px;
-                    margin-bottom: 8px;
-                    color: #555;
-                }
-                .resumen-linea {
-                    text-align: right;
-                    margin: 8px 0;
-                    font-size: 18px;
-                }
-                .resumen-label {
-                    display: inline-block;
-                    width: 70%;
-                    text-align: right;
-                }
-                .resumen-valor {
-                    display: inline-block;
-                    width: 28%;
-                    text-align: right;
-                    font-weight: bold;
-                }
-                .total-linea {
-                    font-size: 22px;
-                    font-weight: bold;
-                    margin-top: 10px;
-                    padding-top: 10px;
-                    border-top: 2px solid #000;
-                }
-                .metodo-pago {
-                    font-size: 20px;
-                    font-weight: bold;
-                    margin: 15px 0;
-                    padding: 8px;
-                    background: #f0f0f0;
-                    border-radius: 8px;
-                }
-                .gracias {
-                    margin-top: 20px;
-                    font-size: 18px;
-                    font-weight: bold;
-                }
-                .fin {
-                    margin-top: 15px;
-                    font-size: 16px;
-                    font-style: italic;
-                }
-                @media print {
-                    body {
-                        padding: 0;
-                        margin: 0;
-                    }
-                    .no-print {
-                        display: none;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <div class="ticket">
-                <div class="logo-texto">EL IDEAL</div>
-                <div class="empresa-info">Pollería & Salchipaperías</div>
-                <div class="empresa-info">Arequipa - Perú</div>
-                <div class="empresa-info">RUC: 20456789012</div>
-                <hr>
-                <div class="fecha">📅 ${venta.fecha}</div>
-                <hr>
-
-                ${venta.items.map(item => `
-                    <div class="producto-linea">
-                        <span class="producto-nombre">${item.producto}</span>
-                        <span class="producto-cantidad">${item.cantidad}</span>
-                        <span class="producto-precio">S/${item.total.toFixed(2)}</span>
-                    </div>
-                    <div class="precio-unitario">
-                        (S/${item.precio.toFixed(2)} c/u)
-                    </div>
-                `).join('')}
-
-                <hr>
-
-                <div class="resumen-linea">
-                    <span class="resumen-label">Subtotal:</span>
-                    <span class="resumen-valor">S/${venta.subtotal.toFixed(2)}</span>
-                </div>
-                ${venta.propina > 0 ? `
-                <div class="resumen-linea">
-                    <span class="resumen-label">Propina:</span>
-                    <span class="resumen-valor">S/${venta.propina.toFixed(2)}</span>
-                </div>
-                ` : ''}
-                <div class="resumen-linea total-linea">
-                    <span class="resumen-label">TOTAL:</span>
-                    <span class="resumen-valor">S/${venta.total.toFixed(2)}</span>
-                </div>
-                
-                <hr>
-                
-                <div class="metodo-pago">
-                    ${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}
-                </div>
-                
-                <hr>
-
-                <div class="gracias">
-                    ¡Gracias por su compra!
-                </div>
-                <div class="fin">
-                    *** Fin del Comprobante ***
-                </div>
-            </div>
-            <script>
-                // Auto-imprimir al cargar
-                window.onload = function() {
-                    window.print();
-                    window.onafterprint = function() {
-                        window.close();
-                    };
-                    // Si el usuario cierra la ventana de impresión, igual cerrar
-                    setTimeout(function() {
-                        window.close();
-                    }, 1000);
-                };
-            <\/script>
-        </body>
-        </html>
-    `;
-    
+    let ventanaImpresion = window.open('', '_blank', 'width=300,height=500,toolbar=no,menubar=no');
+    let iconoMetodo = { 'Efectivo': '💵', 'Yape': '📱', 'Plin': '📱', 'Tarjeta': '💳' };
+    function truncarTexto(texto, maxLen = 22) {
+        if(texto.length > maxLen) return texto.substring(0, maxLen - 3) + "...";
+        return texto;
+    }
+    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta - El Ideal</title><style>body{font-family:'Courier New',monospace;background:white;padding:15px 8px;width:280px;margin:0 auto;}.ticket{width:264px;margin:0 auto;font-size:14px;line-height:1.5;text-align:center;}hr{border-top:1px dashed #000;margin:8px 0;}.logo-texto{font-size:20px;font-weight:bold;}.producto-fila{margin:4px 0;font-size:12px;}.producto-nombre{display:inline-block;width:55%;text-align:left;}.producto-cantidad{width:15%;display:inline-block;text-align:center;}.producto-precio{width:28%;display:inline-block;text-align:right;}.total-linea{font-size:16px;font-weight:bold;border-top:1px dashed #000;margin-top:8px;padding-top:6px;}.metodo-pago{background:#f0f0f0;border-radius:5px;padding:5px;margin:10px 0;}</style></head><body><div class="ticket"><div class="logo-texto">EL IDEAL</div><div>Pollería & Salchipaperías</div><hr><div>📅 ${venta.fecha}</div><hr>${venta.items.map(item => `<div class="producto-fila"><span class="producto-nombre">${truncarTexto(item.producto,22)}</span><span class="producto-cantidad">${item.cantidad}</span><span class="producto-precio">${item.total.toFixed(2)}</span></div><div style="font-size:10px;text-align:right;">(${item.precio.toFixed(2)} c/u)</div>`).join('')}<hr><div style="text-align:right;">Subtotal: S/${venta.subtotal.toFixed(2)}</div>${venta.propina>0?`<div style="text-align:right;">Propina: S/${venta.propina.toFixed(2)}</div>`:''}<div class="total-linea" style="text-align:right;">TOTAL: S/${venta.total.toFixed(2)}</div><hr><div class="metodo-pago">${iconoMetodo[venta.metodoPago]} ${venta.metodoPago}: S/${venta.total.toFixed(2)}</div><hr><div>¡Gracias por su compra!</div><div>*** Fin del Comprobante ***</div></div><script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};setTimeout(function(){window.close();},1000);};<\/script></body></html>`;
     ventanaImpresion.document.write(contenido);
     ventanaImpresion.document.close();
 }
 
-// ==================== RESUMEN DEL DÍA ====================
 function actualizarResumenDelDia() {
-    let hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    
-    let ventasHoy = historialVentas.filter(v => {
-        let fechaVenta = new Date(v.fechaObj);
-        fechaVenta.setHours(0, 0, 0, 0);
-        return fechaVenta.getTime() === hoy.getTime();
-    });
-    
-    let totales = {
-        Efectivo: 0,
-        Yape: 0,
-        Plin: 0,
-        Tarjeta: 0,
-        General: 0
-    };
-    
-    ventasHoy.forEach(venta => {
-        totales[venta.metodoPago] += venta.total;
-        totales.General += venta.total;
-    });
-    
+    let hoy = new Date(); hoy.setHours(0,0,0,0);
+    let ventasHoy = historialVentas.filter(v => { let fv = new Date(v.fechaObj); fv.setHours(0,0,0,0); return fv.getTime() === hoy.getTime(); });
+    let totales = { Efectivo:0, Yape:0, Plin:0, Tarjeta:0, General:0 };
+    ventasHoy.forEach(v => { totales[v.metodoPago] += v.total; totales.General += v.total; });
     document.getElementById('totalEfectivoDia').innerText = `S/${totales.Efectivo.toFixed(2)}`;
     document.getElementById('totalYapeDia').innerText = `S/${totales.Yape.toFixed(2)}`;
     document.getElementById('totalPlinDia').innerText = `S/${totales.Plin.toFixed(2)}`;
     document.getElementById('totalTarjetaDia').innerText = `S/${totales.Tarjeta.toFixed(2)}`;
     document.getElementById('totalGeneralDia').innerText = `${totales.General.toFixed(2)}`;
-    
     let ventasDiv = document.getElementById('ventasDelDia');
-    
-    if(ventasHoy.length === 0) {
-        ventasDiv.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas registradas hoy</p>';
-        return;
-    }
-    
-    ventasDiv.innerHTML = ventasHoy.map((venta, idx) => `
-        <div class="venta-dia-item">
-            <div class="venta-dia-header">
-                🕐 ${venta.fecha} - ${venta.metodoPago}
-            </div>
-            <div style="font-size: 13px;">
-                ${venta.items.map(item => `• ${item.cantidad}x ${item.producto}`).join(' | ')}
-            </div>
-            <div style="margin-top: 5px; font-weight: bold; color: #ff6b35;">
-                Total: S/${venta.total.toFixed(2)}
-                ${venta.propina > 0 ? ` (Propina: S/${venta.propina.toFixed(2)})` : ''}
-            </div>
-        </div>
-    `).join('');
+    if(ventasHoy.length===0){ ventasDiv.innerHTML='<p style="color:#999; text-align:center;">No hay ventas registradas hoy</p>'; return; }
+    ventasDiv.innerHTML = ventasHoy.map((venta, idx) => `<div class="venta-dia-item"><div class="venta-dia-header">🕐 ${venta.fecha} - ${venta.metodoPago}</div><div style="font-size:13px;">${venta.items.map(item=>`• ${item.cantidad}x ${item.producto}`).join(' | ')}</div><div style="margin-top:5px;font-weight:bold;color:#ff6b35;">Total: S/${venta.total.toFixed(2)}${venta.propina>0?` (Propina: S/${venta.propina.toFixed(2)})`:''}</div></div>`).join('');
 }
 
-// ==================== HISTORIAL ====================
 function actualizarHistorial() {
     let filtroFecha = document.getElementById('filtroFecha').value;
     let historialDiv = document.getElementById('historialVentas');
-    
     let ventasFiltradas = historialVentas;
-    if(filtroFecha) {
-        ventasFiltradas = historialVentas.filter(v => 
-            v.fecha.split(',')[0] === new Date(filtroFecha).toLocaleDateString()
-        );
-    }
-    
-    if(ventasFiltradas.length === 0) {
-        historialDiv.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas registradas</p>';
-        return;
-    }
-    
-    historialDiv.innerHTML = ventasFiltradas.map((venta, idx) => `
-        <div class="historial-item">
-            <div class="historial-header">
-                📅 Venta #${ventasFiltradas.length - idx} - ${venta.fecha}
-            </div>
-            <div class="historial-tabla">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unit.</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${venta.items.map(item => `
-                            <tr>
-                                <td>${item.producto}</td>
-                                <td style="text-align:center">${item.cantidad}</td>
-                                <td style="text-align:right">S/${item.precio.toFixed(2)}</td>
-                                <td style="text-align:right">S/${item.total.toFixed(2)}</td>
-                            </tr>
-                        `).join('')}
-                        <tr style="background: #f0f0f0; font-weight: bold;">
-                            <td colspan="3" style="text-align:right">Subtotal:</td>
-                            <td style="text-align:right">S/${venta.subtotal.toFixed(2)}</td>
-                        </tr>
-                        ${venta.propina > 0 ? `
-                        <tr style="background: #f0f0f0;">
-                            <td colspan="3" style="text-align:right">Propina:</td>
-                            <td style="text-align:right">S/${venta.propina.toFixed(2)}</td>
-                        </tr>
-                        ` : ''}
-                        <tr style="background: #ff6b35; color: white; font-weight: bold;">
-                            <td colspan="3" style="text-align:right">TOTAL:</td>
-                            <td style="text-align:right">S/${venta.total.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" style="text-align:center; background: #e9ecef;">
-                                <strong>💰 Método de Pago: ${venta.metodoPago}</strong>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `).join('');
+    if(filtroFecha) ventasFiltradas = historialVentas.filter(v => v.fecha.split(',')[0] === new Date(filtroFecha).toLocaleDateString());
+    if(ventasFiltradas.length===0){ historialDiv.innerHTML='<p style="color:#999; text-align:center;">No hay ventas registradas</p>'; return; }
+    historialDiv.innerHTML = ventasFiltradas.map((venta, idx) => `<div class="historial-item"><div class="historial-header">📅 Venta #${ventasFiltradas.length - idx} - ${venta.fecha}</div><div class="historial-tabla"><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio Unit.</th><th>Total</th></tr></thead><tbody>${venta.items.map(item=>`<tr><td>${item.producto}</td><td style="text-align:center">${item.cantidad}</td><td style="text-align:right">S/${item.precio.toFixed(2)}</td><td style="text-align:right">S/${item.total.toFixed(2)}</td></tr>`).join('')}<tr style="background:#f0f0f0;font-weight:bold;"><td colspan="3" style="text-align:right">Subtotal:</td><td style="text-align:right">S/${venta.subtotal.toFixed(2)}</td></tr>${venta.propina>0?`<tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right">Propina:</td><td style="text-align:right">S/${venta.propina.toFixed(2)}</td></tr>`:''}<tr style="background:#ff6b35;color:white;font-weight:bold;"><td colspan="3" style="text-align:right">TOTAL:</td><td style="text-align:right">S/${venta.total.toFixed(2)}</td></tr><tr><td colspan="4" style="text-align:center;background:#e9ecef;"><strong>💰 Método de Pago: ${venta.metodoPago}</strong></td></tr></tbody></table></div></div>`).join('');
 }
 
 function exportarCSV() {
     let csv = "Fecha,Productos,Subtotal,Propina,Total,MetodoPago\n";
-    historialVentas.forEach(venta => {
-        let productos = venta.items.map(i => `${i.cantidad}x${i.producto}`).join(" | ");
-        csv += `"${venta.fecha}","${productos}",${venta.subtotal},${venta.propina},${venta.total},${venta.metodoPago}\n`;
-    });
-    
+    historialVentas.forEach(v => { let productos = v.items.map(i=>`${i.cantidad}x${i.producto}`).join(" | "); csv += `"${v.fecha}","${productos}",${v.subtotal},${v.propina},${v.total},${v.metodoPago}\n`; });
     let blob = new Blob([csv], { type: 'text/csv' });
     let link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -1138,26 +961,32 @@ function mostrarNotificacion(titulo, mensaje) {
     document.getElementById('notifTitulo').innerHTML = titulo;
     document.getElementById('notifMensaje').innerHTML = mensaje;
     document.getElementById('modalNotificacion').style.display = 'block';
-    
-    setTimeout(() => {
-        cerrarModalNotificacion();
-    }, 3000);
+    setTimeout(() => cerrarModalNotificacion(), 3000);
 }
+function cerrarModalNotificacion() { document.getElementById('modalNotificacion').style.display = 'none'; }
 
-function cerrarModalNotificacion() {
-    document.getElementById('modalNotificacion').style.display = 'none';
+if (!verificarSesionExistente()) {
+    document.getElementById('btnAcceder').onclick = iniciarSesion;
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) { if(e.key === 'Enter') iniciarSesion(); });
 }
-
-// Eventos del login
-document.getElementById('btnAcceder').onclick = verificarPassword;
-document.getElementById('btnCerrarSesion').onclick = cerrarSesion;
-document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') {
-        verificarPassword();
-    }
-});
-
+const btnCerrar = document.getElementById('btnCerrarSesion');
+if(btnCerrar) btnCerrar.onclick = cerrarSesion;
 </script>
 
+<!-- Script adicional para facilitar el cambio de logo de manera visual -->
+<script>
+    // Función opcional para que puedas cambiar el logo fácilmente desde la consola si lo deseas.
+    // Ejemplo: cambiarLogo("ruta/de/mi-logo.png");
+    window.cambiarLogo = function(rutaImagen) {
+        const logoImg = document.getElementById('logoImg');
+        if(logoImg) {
+            logoImg.src = rutaImagen;
+            console.log("Logo cambiado a: " + rutaImagen);
+        } else {
+            console.error("No se encontró el elemento del logo.");
+        }
+    };
+    console.log("💡 Tip: Para cambiar el logo dinámicamente usa: cambiarLogo('ruta/de/tu/logo.png')");
+</script>
 </body>
 </html>
