@@ -1190,7 +1190,7 @@ function cancelarVenta() {
 
 function imprimirBoleta(venta) {
     let ventana = window.open('', '_blank', 'width=300,height=500');
-    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta</title><style>body{font-family:monospace;padding:15px;width:280px;margin:0 auto;text-align:center;}hr{border-top:1px dashed #000;}</style></head><body><div><strong>EL IDEAL</strong><br>Pollería & Salchipaperías<hr>📅 ${venta.fecha}<hr>${venta.items.map(i => `<div>${i.producto} x${i.cantidad} = S/${i.total.toFixed(2)}</div>`).join('')}<hr>Subtotal: S/${venta.subtotal.toFixed(2)}<br>${venta.propina>0?`Propina: S/${venta.propina.toFixed(2)}<br>`:''}<strong>TOTAL: S/${venta.total.toFixed(2)}</strong><hr>${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>¡Gracias por su compra!<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
+    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta</title><style>body{font-family:monospace;padding:15px;width:280px;margin:0 auto;text-align:center;}hr{border-top:1px dashed #000;}</style></head><body><div><strong>EL IDEAL</strong><br>Pollería & Salchipaperías<hr>📅 ${venta.fecha}<hr>${venta.items.map(i => `<div>${i.producto} x${i.cantidad} = S/${i.total.toFixed(2)}</div>`).join('')}<hr>Subtotal: S/${venta.subtotal.toFixed(2)}<br>${venta.propina>0?`Propina: S/${venta.propina.toFixed(2)}<br>`:''}<strong>TOTAL: S/${venta.total.toFixed(2)}</strong><hr>${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>¡Gracias por su compra! reclame su boleta de Compra<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
     ventana.document.write(contenido);
 }
 
