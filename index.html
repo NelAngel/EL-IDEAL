@@ -141,7 +141,6 @@ header {
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    cursor: pointer;
 }
 
 .logo-container img {
@@ -168,30 +167,37 @@ header {
     transform: scale(1.02);
 }
 
-/* === NOTIFICACIÓN GLOBAL (AVISO PROGRAMADO) === */
-.aviso-global {
-    background: #fff3cd;
-    border-left: 8px solid #ffc107;
-    color: #856404;
+/* === NOTIFICACIÓN FLOTANTE (TOAST) === */
+.toast-notificacion {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1e293b;
+    color: white;
     padding: 12px 20px;
-    margin: 0 0 20px 0;
-    border-radius: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    max-width: 320px;
+    font-size: 0.9rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-weight: 500;
+    gap: 12px;
+    animation: slideInToast 0.3s ease;
+    border-left: 5px solid #ffc107;
 }
-.aviso-global .cerrar-aviso {
+.toast-notificacion button {
     background: none;
     border: none;
-    font-size: 1.3rem;
+    color: white;
+    font-size: 1.2rem;
     cursor: pointer;
-    color: #856404;
+    padding: 0 4px;
+    margin: 0;
 }
-.aviso-global .cerrar-aviso:hover {
-    color: #dc3545;
+@keyframes slideInToast {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
 /* === GRID PRINCIPAL === */
@@ -203,7 +209,7 @@ header {
     gap: 28px;
 }
 
-/* === CARDS MEJORADAS === */
+/* === CARDS === */
 .card {
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(2px);
@@ -298,7 +304,6 @@ tr:nth-child(even) {
 .badge-yape { background: #17a2b8; color: white; }
 .badge-plin { background: #6f42c1; color: white; }
 .badge-tarjeta { background: #fd7e14; color: white; }
-.badge-egreso { background: #dc3545; color: white; }
 
 .btn-eliminar, .btn-editar {
     background: none;
@@ -409,7 +414,7 @@ tr:nth-child(even) {
     font-size: 1rem;
 }
 
-/* === PESTAÑAS (MEJORADAS) === */
+/* === PESTAÑAS === */
 .tabs-container {
     background: #f1f5f9;
     border-radius: 2rem;
@@ -664,12 +669,6 @@ tr:nth-child(even) {
         </div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">🚪 Cerrar Sesión</button>
     </header>
-
-    <!-- Banner de aviso programado -->
-    <div id="avisoContainer" class="aviso-global" style="display: none;">
-        <span id="avisoTexto"></span>
-        <button class="cerrar-aviso" id="btnCerrarAviso">✖</button>
-    </div>
 
     <div class="container">
         <!-- COLUMNA IZQUIERDA: REGISTRO -->
@@ -1293,7 +1292,6 @@ function actualizarTopProductos() {
 }
 
 // ==================== DATOS DEL SISTEMA ====================
-// Lista de productos (unificada, sin duplicados graves)
 let productos = [
     { id: 1, nombre: "Cono escolar", precio: 2.50 },
     { id: 2, nombre: "Salchicono", precio: 4.00 },
@@ -1478,60 +1476,85 @@ function guardarEgresoDesdeModal() {
     }
 }
 
-// ==================== AVISO PROGRAMADO DESDE JSON ====================
-async function cargarAvisoGitHub() {
+// ==================== NOTIFICACIÓN FLOTANTE PERIÓDICA DESDE aviso.json ====================
+let configToast = {
+    texto: "",
+    inicio: null,
+    fin: null,
+    intervaloMinutos: 10,
+    activo: false
+};
+let temporizadorToast = null;
+let ultimaNotificacion = 0;
+
+function mostrarToast(mensaje) {
+    let ahora = Date.now();
+    if (ahora - ultimaNotificacion < 60000) return; // máximo 1 por minuto
+    ultimaNotificacion = ahora;
+    
+    let toast = document.createElement('div');
+    toast.className = 'toast-notificacion';
+    toast.innerHTML = `<span>${mensaje}</span><button class="cerrar-toast">✖</button>`;
+    document.body.appendChild(toast);
+    toast.querySelector('.cerrar-toast').onclick = () => toast.remove();
+    setTimeout(() => toast.remove(), 5000);
+}
+
+async function cargarConfigToast() {
     try {
-        // Agregamos timestamp para evitar caché
-        const url = `aviso.json?t=${new Date().getTime()}`;
-        const respuesta = await fetch(url);
-        if (!respuesta.ok) {
-            document.getElementById('avisoContainer').style.display = 'none';
+        const url = `aviso.json?t=${Date.now()}`;
+        const resp = await fetch(url);
+        if (!resp.ok) {
+            configToast.activo = false;
             return;
         }
-        const aviso = await respuesta.json();
-        
-        const ahora = new Date();
-        let mostrar = false;
-        
-        if (aviso.inicio && aviso.fin) {
-            const inicio = new Date(aviso.inicio);
-            const fin = new Date(aviso.fin);
-            if (ahora >= inicio && ahora <= fin) {
-                mostrar = true;
-            }
-        } else if (aviso.texto) {
-            mostrar = true;
-        }
-        
-        if (mostrar && aviso.texto && aviso.texto.trim() !== "") {
-            document.getElementById('avisoTexto').innerHTML = aviso.texto;
-            document.getElementById('avisoContainer').style.display = 'flex';
+        const data = await resp.json();
+        if (data.texto) {
+            configToast.texto = data.texto;
+            configToast.inicio = data.inicio ? new Date(data.inicio) : null;
+            configToast.fin = data.fin ? new Date(data.fin) : null;
+            configToast.intervaloMinutos = data.intervaloMinutos || 10;
+            configToast.activo = true;
         } else {
-            document.getElementById('avisoContainer').style.display = 'none';
+            configToast.activo = false;
         }
-    } catch (error) {
-        console.error("Error al cargar aviso:", error);
-        document.getElementById('avisoContainer').style.display = 'none';
+    } catch(e) {
+        console.error("Error cargando aviso.json", e);
+        configToast.activo = false;
     }
 }
 
-function cerrarAvisoManual() {
-    document.getElementById('avisoContainer').style.display = 'none';
-    sessionStorage.setItem('avisoCerrado', 'true');
+function deberiaMostrarToast() {
+    if (!configToast.activo || !configToast.texto) return false;
+    let ahora = new Date();
+    if (configToast.inicio && ahora < configToast.inicio) return false;
+    if (configToast.fin && ahora > configToast.fin) return false;
+    return true;
 }
 
-function inicializarAviso() {
-    if (sessionStorage.getItem('avisoCerrado') === 'true') {
-        document.getElementById('avisoContainer').style.display = 'none';
-        return;
-    }
-    cargarAvisoGitHub();
-    setInterval(() => {
-        if (sessionStorage.getItem('avisoCerrado') !== 'true') {
-            cargarAvisoGitHub();
+function iniciarCicloToast() {
+    if (temporizadorToast) clearInterval(temporizadorToast);
+    if (!configToast.activo) return;
+    let intervaloMs = configToast.intervaloMinutos * 60 * 1000;
+    temporizadorToast = setInterval(() => {
+        if (deberiaMostrarToast()) {
+            mostrarToast(configToast.texto);
         }
-    }, 300000);
+    }, intervaloMs);
+    // Mostrar una inmediatamente si está dentro del horario
+    if (deberiaMostrarToast()) {
+        mostrarToast(configToast.texto);
+    }
 }
+
+async function actualizarConfigYReiniciar() {
+    await cargarConfigToast();
+    iniciarCicloToast();
+}
+
+// Iniciar notificación
+cargarConfigToast().then(() => iniciarCicloToast());
+setInterval(actualizarConfigYReiniciar, 30000); // cada 30 segundos
 
 // ==================== INICIALIZACIÓN Y TABS ====================
 function initTabs() {
@@ -1561,7 +1584,6 @@ function inicializarSistema() {
     actualizarTopProductos();
     actualizarListaEgresos();
     initTabs();
-    inicializarAviso();
     
     document.getElementById('btnBuscarFecha').onclick = buscarPorFecha;
     document.getElementById('btnVerHoy').onclick = verHoy;
@@ -1586,8 +1608,6 @@ function inicializarSistema() {
     
     document.getElementById('buscarProducto').addEventListener('input', e => cargarProductos(e.target.value));
     document.getElementById('producto').addEventListener('change', cargarCantidades);
-    
-    document.getElementById('btnCerrarAviso').addEventListener('click', cerrarAvisoManual);
 }
 
 // ==================== SEGURIDAD ====================
