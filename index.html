@@ -2,370 +2,642 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Sistema de Ventas - Pollería Arequipa</title>
 <link rel="icon" type="image/x-icon" href="logo.png">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #b6b8c2 0%, #d1d1d1 100%);
-    min-height: 100vh;
-    padding: 20px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(145deg, #cbd5e1 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    padding: 24px;
+}
+
+/* === LOGIN === */
 .login-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, hsl(0, 100%, 62%) 0%, #ffd9d9 100%);
+    background: linear-gradient(135deg, #f67a7a 0%, #e04f4f 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    backdrop-filter: blur(4px);
 }
 
 .login-card {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.98);
+    padding: 2rem 2rem 2.5rem;
+    border-radius: 2rem;
+    box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
     text-align: center;
-    width: 350px;
-    animation: fadeInUp 0.5s;
+    width: 360px;
+    transition: transform 0.2s ease;
 }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+.login-card:hover {
+    transform: translateY(-5px);
 }
 
-.login-card h2 { color: #ff6b35; margin-bottom: 10px; }
+.login-card h2 {
+    color: #ff6b35;
+    margin-bottom: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
 .login-card input {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    font-size: 16px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    border: 2px solid #e9ecef;
+    border-radius: 60px;
+    font-size: 1rem;
     text-align: center;
+    transition: all 0.2s;
 }
-.login-card input:focus { border-color: #ff6b35; outline: none; }
+
+.login-card input:focus {
+    border-color: #cd7453;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,107,53,0.2);
+}
+
 .login-card button {
     width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #fff1ec, #ff2020);
+    padding: 14px;
+    background: linear-gradient(135deg, #e81f1f, #f77070);
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 60px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 8px;
+    transition: all 0.2s;
 }
-.error-msg { color: #dc3545; font-size: 14px; margin-top: 10px; display: none; }
-.main-content { display: none; }
 
+.login-card button:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(255,107,53,0.4);
+}
+
+.error-msg {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 12px;
+    display: none;
+}
+
+/* === HEADER === */
 header {
-    background: linear-gradient(135deg, #ff0000, #ff0000);
+    background: linear-gradient(135deg, #e52e2e, #b91c1c);
     color: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
+    padding: 20px 28px;
+    border-radius: 2rem;
+    margin-bottom: 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 16px;
+    box-shadow: 0 12px 20px -8px rgba(0,0,0,0.2);
 }
 
-.header-titles { flex: 1; text-align: center; }
-.header-titles h1 { font-size: 1.8rem; }
-.header-titles p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+.header-titles {
+    flex: 1;
+    text-align: center;
+}
+
+.header-titles h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.header-titles p {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
 
 .logo-container {
-    flex-shrink: 0;
     width: 80px;
     height: 80px;
-    background-color: white;
+    background: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
 }
-.logo-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 .btn-cerrar-sesion {
-    background: #c3bfbf;
-    padding: 8px 15px;
-    font-size: 14px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+    padding: 10px 20px;
+    border-radius: 40px;
     border: none;
-    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
+    transition: 0.2s;
+    color: white;
+    font-size: 0.9rem;
 }
-.btn-cerrar-sesion:hover { background: #c82333; color: white; }
 
+.btn-cerrar-sesion:hover {
+    background: #b91c1c;
+    transform: scale(1.02);
+}
+
+/* === NOTIFICACIÓN GLOBAL (AVISO PROGRAMADO) === */
+.aviso-global {
+    background: #fff3cd;
+    border-left: 8px solid #ffc107;
+    color: #856404;
+    padding: 12px 20px;
+    margin: 0 0 20px 0;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-weight: 500;
+}
+.aviso-global .cerrar-aviso {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #856404;
+}
+.aviso-global .cerrar-aviso:hover {
+    color: #dc3545;
+}
+
+/* === GRID PRINCIPAL === */
 .container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 28px;
 }
 
+/* === CARDS MEJORADAS === */
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(2px);
+    padding: 1.5rem;
+    border-radius: 1.75rem;
+    box-shadow: 0 12px 28px -8px rgba(0,0,0,0.1);
+    transition: all 0.25s ease;
+    border: 1px solid rgba(255,255,255,0.6);
 }
-.card:hover { transform: translateY(-5px); }
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
+}
+
 .card h2 {
     color: #ff6b35;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #ff6b35;
-    padding-bottom: 10px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 3px solid #ff6b35;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1.5rem;
 }
 
+/* === FORMULARIOS Y BOTONES === */
 select, input, button {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 14px;
+    padding: 10px 16px;
+    margin: 6px 6px 6px 0;
+    border-radius: 60px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    background: white;
+}
+
+input:focus, select:focus {
+    border-color: #ff6b35;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,107,53,0.2);
 }
 
 button {
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    background: linear-gradient(135deg, #ff6b35, #f97316);
     color: white;
     border: none;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    padding: 10px 20px;
 }
-button:hover { transform: scale(1.02); }
 
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-th { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(255,107,53,0.3);
+}
+
+/* === TABLAS === */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 16px;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+th, td {
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid #edf2f7;
+}
+
+th {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background-color: #fff8f2;
+}
 
 .badge {
     display: inline-block;
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-size: 11px;
-    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-size: 0.7rem;
+    font-weight: 700;
 }
 .badge-efectivo { background: #28a745; color: white; }
 .badge-yape { background: #17a2b8; color: white; }
 .badge-plin { background: #6f42c1; color: white; }
 .badge-tarjeta { background: #fd7e14; color: white; }
+.badge-egreso { background: #dc3545; color: white; }
 
-.btn-eliminar { background: #dc3545; padding: 5px 10px; font-size: 12px; }
-.btn-editar { background: #ffc107; color: #333; padding: 5px 10px; font-size: 12px; }
+.btn-eliminar, .btn-editar {
+    background: none;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    border-radius: 40px;
+    margin: 0 2px;
+}
+.btn-eliminar { background: #dc3545; color: white; }
+.btn-editar { background: #ffc107; color: #2d3748; }
 
 .buscar {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 2px solid #ff6b35;
-    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    border: 2px solid #ffe4d6;
+    border-radius: 60px;
+    background: #fffaf5;
+}
+.buscar:focus {
+    border-color: #ff6b35;
 }
 
+/* === MODALES === */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
-}
-.modal-contenido {
-    background-color: white;
-    margin: 10% auto;
-    padding: 25px;
-    border-radius: 15px;
-    width: 400px;
-    max-width: 90%;
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
 }
 
+.modal-contenido {
+    background: white;
+    padding: 2rem;
+    border-radius: 2rem;
+    width: 380px;
+    max-width: 90%;
+    box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+    animation: modalFade 0.2s ease;
+}
+
+@keyframes modalFade {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* === HISTORIAL === */
 .historial-item {
     margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #ffe4d6;
+    border-radius: 1.5rem;
     overflow: hidden;
+    background: white;
 }
+
 .historial-header {
     background: #ff6b35;
     color: white;
-    padding: 10px;
-    font-weight: bold;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
 }
 
+/* === TOTALES DEL DÍA === */
 .totales-dia {
-    background: linear-gradient(135deg, #28a745, #20c997);
+    background: linear-gradient(135deg, #28a745, #1e8e3e);
     color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 15px;
+    padding: 1.25rem;
+    border-radius: 1.5rem;
+    margin-top: 20px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.1);
 }
+
 .totales-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
     text-align: center;
 }
+
 .total-item {
     background: rgba(255,255,255,0.2);
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 1.25rem;
+    backdrop-filter: blur(2px);
 }
-.total-item .monto { font-size: 18px; font-weight: bold; margin-top: 5px; }
+
+.total-item .monto {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-top: 6px;
+}
 
 .total-dia-filtro {
     background: linear-gradient(135deg, #ff6b35, #f7931e);
-    color: white;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 15px;
+    padding: 14px;
+    border-radius: 60px;
+    margin-bottom: 20px;
     text-align: center;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
+/* === PESTAÑAS (MEJORADAS) === */
 .tabs-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    padding: 5px;
+    background: #f1f5f9;
+    border-radius: 2rem;
+    padding: 8px;
     margin-top: 20px;
 }
+
 .tabs-header {
     display: flex;
-    gap: 5px;
-    padding: 10px 10px 0 10px;
-}
-.tab-btn {
-    flex: 1;
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    padding: 12px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 10px 10px 0 0;
-    transition: all 0.3s;
-}
-.tab-btn:hover { background: rgba(255,255,255,0.4); transform: none; }
-.tab-btn.active { background: white; color: #667eea; }
-.tab-content {
-    background: white;
-    border-radius: 0 0 15px 15px;
-    padding: 20px;
-    min-height: 350px;
-}
-.tab-pane { display: none; }
-.tab-pane.active { display: block; animation: fadeIn 0.3s; }
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 8px 0 8px;
 }
 
-.resumen-ultimos-dias, .resumen-mensual, .top-productos { background: transparent; padding: 0; }
+.tab-btn {
+    background: rgba(100,100,120,0.1);
+    border: none;
+    color: #1e293b;
+    padding: 12px 16px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 2rem;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 110px;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+}
+
+.tab-content {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin-top: 8px;
+}
+
 .dia-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px;
+    border-bottom: 1px solid #f0e6e0;
 }
-.dia-item:last-child { border-bottom: none; }
-.dia-fecha { font-weight: bold; color: #333; }
-.dia-total { font-size: 18px; font-weight: bold; color: #28a745; }
+
+.dia-fecha {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.dia-total {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2c7a4d;
+}
+
 .barra-progreso {
-    background: #e0e0e0;
-    border-radius: 10px;
+    background: #e2e8f0;
+    border-radius: 40px;
     height: 8px;
+    width: 200px;
     overflow: hidden;
-    margin-top: 5px;
-    width: 180px;
+    margin-top: 6px;
 }
-.barra { background: linear-gradient(135deg, #667eea, #764ba2); height: 100%; border-radius: 10px; transition: width 0.3s; }
-.mes-selector { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #667eea; font-size: 14px; margin-bottom: 20px; }
-.mes-total { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; border-radius: 10px; text-align: center; }
-.mes-total h4 { margin-bottom: 10px; font-size: 16px; }
-.mes-total .monto { font-size: 28px; font-weight: bold; }
+
+.barra {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100%;
+    border-radius: 40px;
+    transition: width 0.4s ease;
+}
+
+.mes-selector {
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 60px;
+    border: 2px solid #e2e8f0;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.mes-total {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    text-align: center;
+    color: white;
+}
 
 .top-buttons {
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
+
 .top-btn {
     flex: 1;
-    background: #e0e0e0;
-    color: #333;
+    background: #f1f5f9;
+    color: #1e293b;
     border: none;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+    padding: 10px;
+    border-radius: 60px;
+    font-weight: 600;
 }
-.top-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+
+.top-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
 .producto-top-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px;
+    border-bottom: 1px solid #f0eef3;
 }
-.producto-top-item:last-child { border-bottom: none; }
+
 .producto-rango {
     background: #667eea;
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 60%;
     font-weight: bold;
-    margin-right: 10px;
+    margin-right: 12px;
 }
-.producto-nombre { font-weight: bold; flex: 1; }
-.producto-cantidad { background: #ff9800; color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; margin: 0 10px; }
-.producto-total { font-weight: bold; color: #28a745; }
+
+.producto-cantidad {
+    background: #ff9800;
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+}
 
 .botones-exportar {
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 12px;
+    margin: 20px 0 16px;
 }
-.botones-exportar button {
-    flex: 1;
-    padding: 10px;
-    font-size: 14px;
-}
-.btn-exportar-todo { background: #28a745; }
-.btn-exportar-dia { background: #17a2b8; }
 
-@media (max-width: 768px) {
-    .container { grid-template-columns: 1fr; }
-    .totales-grid { grid-template-columns: repeat(2, 1fr); }
-    header { flex-direction: column; text-align: center; }
-    .logo-container { width: 60px; height: 60px; }
-    .tab-btn { font-size: 11px; padding: 8px; }
-    .barra-progreso { width: 120px; }
-    .botones-exportar { flex-direction: column; }
+.btn-exportar-todo {
+    background: #2c7a4d;
+}
+.btn-exportar-dia {
+    background: #0f5b7a;
+}
+
+/* === LISTA DE EGRESOS === */
+.egreso-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #ffe4d6;
+    background: white;
+}
+.egreso-item:last-child {
+    border-bottom: none;
+}
+.egreso-concepto {
+    font-weight: bold;
+    flex: 2;
+}
+.egreso-monto {
+    font-weight: bold;
+    color: #dc3545;
+    margin: 0 15px;
+}
+.egreso-fecha {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-right: 10px;
+}
+.btn-eliminar-egreso {
+    background: #dc3545;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+}
+.total-egresos-dia {
+    background: #dc3545;
+    color: white;
+    padding: 12px;
+    border-radius: 1rem;
+    margin-top: 15px;
+    text-align: center;
+}
+.neto-dia {
+    background: #17a2b8;
+    margin-top: 10px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 860px) {
+    body {
+        padding: 16px;
+    }
+    .container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .totales-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .logo-container {
+        width: 64px;
+        height: 64px;
+    }
+    .tab-btn {
+        font-size: 0.7rem;
+        padding: 8px 8px;
+        min-width: 80px;
+    }
+    .barra-progreso {
+        width: 140px;
+    }
 }
 </style>
 </head>
@@ -374,28 +646,33 @@ th { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
 <div id="loginContainer" class="login-container">
     <div class="login-card">
         <div class="logo">
-            <img src="1.jpg" alt="Logo El Ideal" style="width: 80px; height: 80px; object-fit: contain; border-radius: 50%; background: white; padding: 2px;">
+            <img src="1.jpg" alt="Logo El Ideal" style="width: 80px; height: 80px; object-fit: contain; border-radius: 50%; background: white; padding: 4px;">
         </div>
-        <h2>INGRESA SU CONTRASEÑA</h2>
+        <h2>🔐 INGRESE SU CONTRASEÑA</h2>
         <input type="password" id="passwordInput" placeholder="Pollerías & Salchipaperías" autofocus>
         <button id="btnAcceder">Acceder</button>
         <div id="errorMsg" class="error-msg">❌ Contraseña incorrecta</div>
     </div>
 </div>
 
-<div id="mainContent" class="main-content">
+<div id="mainContent" class="main-content" style="display: none;">
     <header>
-        <div class="logo-container">
-            <img src="1.jpg" alt="Logo El Ideal" id="logoImg">
-        </div>
+        <div class="logo-container"><img src="1.jpg" alt="Logo El Ideal"></div>
         <div class="header-titles">
-            <h1>El Ideal - Pollerías & Salchipaperías</h1>
-            <p>Hecho por Angel</p>
+            <h1>🍗 El Ideal - Pollerías & Salchipaperías</h1>
+            <p>Gestión inteligente | Hecho por N-A V2.1</p>
         </div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">🚪 Cerrar Sesión</button>
     </header>
 
+    <!-- Banner de aviso programado -->
+    <div id="avisoContainer" class="aviso-global" style="display: none;">
+        <span id="avisoTexto"></span>
+        <button class="cerrar-aviso" id="btnCerrarAviso">✖</button>
+    </div>
+
     <div class="container">
+        <!-- COLUMNA IZQUIERDA: REGISTRO -->
         <div class="card">
             <h2>🛒 Registrar Venta</h2>
             <input type="text" id="buscarProducto" class="buscar" placeholder="🔍 Buscar producto...">
@@ -409,25 +686,26 @@ th { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
             </select>
             <button id="btnAgregarProducto">➕ Agregar Producto</button>
             <button id="btnAgregarPropina">💝 Agregar Propina</button>
+            <button id="btnRegistrarEgreso" style="background: #dc3545;">💸 Registrar Egreso</button>
             
-            <h3 style="margin-top: 20px;">Venta Actual</h3>
-            <table>
-                <thead><tr><th>Producto</th><th>Precio</th><th>Cant</th><th>Total</th><th>Método</th><th>Acciones</th></tr></thead>
-                <tbody id="tablaVenta"></tbody>
-            </table>
-            
-            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                <h3>Subtotal: S/ <span id="subtotal">0.00</span></h3>
-                <h3>Propina: S/ <span id="propina">0.00</span></h3>
+            <h3 style="margin-top: 28px;">🛍️ Venta Actual</h3>
+            <div style="overflow-x: auto;">
+                <table id="tablaVenta">
+                    <thead><tr><th>Producto</th><th>Precio</th><th>Cant</th><th>Total</th><th>Método</th><th>Acciones</th></tr></thead>
+                    <tbody id="tablaVentaBody"></tbody>
+                </table>
+            </div>
+            <div style="margin-top: 20px; padding: 18px; background: #fff8f2; border-radius: 1.5rem;">
+                <h3>📦 Subtotal: S/ <span id="subtotal">0.00</span></h3>
+                <h3>✨ Propina: S/ <span id="propina">0.00</span></h3>
                 <h3 style="color: #ff6b35;">💰 TOTAL: S/ <span id="totalGeneral">0.00</span></h3>
             </div>
+            <button id="btnFinalizarVenta" style="width: 100%; margin-top: 12px;">✅ Finalizar Venta e Imprimir</button>
+            <button id="btnCancelarVenta" style="width: 100%; margin-top: 8px; background: #dc3545;">❌ Cancelar Venta</button>
             
-            <button id="btnFinalizarVenta" style="width: 100%; margin-top: 10px; padding: 12px;">✅ Finalizar Venta e Imprimir</button>
-            <button id="btnCancelarVenta" style="width: 100%; margin-top: 5px; background: #dc3545;">❌ Cancelar Venta</button>
-            
-            <div style="margin-top: 20px; background: #f8f9fa; border-radius: 10px; overflow: hidden;">
-                <div style="background: linear-gradient(135deg, #17a2b8, #138496); color: white; padding: 12px; font-weight: bold;">📦 Ventas por Producto (Hoy)</div>
-                <div style="max-height: 250px; overflow-y: auto;">
+            <div style="margin-top: 28px; background: #fef7f0; border-radius: 1.5rem; overflow: hidden;">
+                <div style="background: linear-gradient(135deg, #17a2b8, #0f5b7a); color: white; padding: 12px 16px; font-weight: bold;">📦 Ventas por Producto (Hoy)</div>
+                <div style="max-height: 260px; overflow-y: auto;">
                     <table id="tablaVentasPorProducto">
                         <thead><tr><th>Producto</th><th>Cantidad</th><th>Total</th></tr></thead>
                         <tbody id="cuerpoVentasPorProducto"><tr><td colspan="3" style="text-align:center;">Cargando...</td></tr></tbody>
@@ -436,63 +714,80 @@ th { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
             </div>
         </div>
         
+        <!-- COLUMNA DERECHA: REPORTES -->
         <div>
             <div class="card">
                 <h2>📊 Resumen de Ventas del Día</h2>
                 <div class="totales-dia">
-                    <h3>💰 TOTAL GANADO HOY</h3>
+                    <h3>🎯 TOTAL GANADO HOY</h3>
                     <div class="totales-grid">
-                        <div class="total-item"><div class="label">💵 Efectivo</div><div class="monto" id="totalEfectivoDia">S/0.00</div></div>
-                        <div class="total-item"><div class="label">📱 Yape</div><div class="monto" id="totalYapeDia">S/0.00</div></div>
-                        <div class="total-item"><div class="label">📱 Plin</div><div class="monto" id="totalPlinDia">S/0.00</div></div>
-                        <div class="total-item"><div class="label">💳 Tarjeta</div><div class="monto" id="totalTarjetaDia">S/0.00</div></div>
+                        <div class="total-item">💵 Efectivo<div class="monto" id="totalEfectivoDia">S/0.00</div></div>
+                        <div class="total-item">📱 Yape<div class="monto" id="totalYapeDia">S/0.00</div></div>
+                        <div class="total-item">📱 Plin<div class="monto" id="totalPlinDia">S/0.00</div></div>
+                        <div class="total-item">💳 Tarjeta<div class="monto" id="totalTarjetaDia">S/0.00</div></div>
                     </div>
-                    <div style="text-align:center; margin-top:15px;"><strong>🎯 TOTAL GENERAL: S/ <span id="totalGeneralDia" style="font-size:24px;">0.00</span></strong></div>
+                    <div style="text-align:center; margin-top: 16px;"><strong>💎 TOTAL VENTAS: S/ <span id="totalGeneralDia" style="font-size: 1.8rem;">0.00</span></strong></div>
+                    <div id="egresosDiaInfo" class="total-egresos-dia" style="margin-top: 15px; background: #dc3545;">
+                        💸 EGRESOS HOY: S/ <span id="totalEgresosDia">0.00</span>
+                        <div id="netoDiaInfo" style="background: #17a2b8; margin-top: 10px; padding: 8px; border-radius: 1rem;">
+                            🎯 NETO (Ventas - Egresos): S/ <span id="netoDia">0.00</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="card">
-                <h2>📜 Historial Completo de Ventas</h2>
-                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                <h2>📜 Historial Completo</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
                     <input type="text" id="filtroFecha" placeholder="dd/mm/aaaa" style="flex:2;">
                     <button id="btnBuscarFecha" style="background:#17a2b8;">🔍 Buscar</button>
                     <button id="btnVerHoy" style="background:#28a745;">📆 Ver Hoy</button>
                     <button id="btnMostrarTodo" style="background:#6c757d;">📋 Todo</button>
                 </div>
-                
-                <!-- DOS BOTONES DE EXPORTACIÓN -->
                 <div class="botones-exportar">
                     <button id="btnExportarTodo" class="btn-exportar-todo">📊 Exportar TODO</button>
                     <button id="btnExportarDia" class="btn-exportar-dia">📅 Exportar DÍA</button>
                 </div>
-                
                 <div id="totalDiaSeleccionado" class="total-dia-filtro" style="display:none;"></div>
-                <div id="historialVentas" style="max-height: 350px; overflow-y: auto;"></div>
+                <div id="historialVentas" style="max-height: 360px; overflow-y: auto;"></div>
             </div>
             
             <div class="tabs-container">
                 <div class="tabs-header">
-                    <button class="tab-btn active" data-tab="tab-7dias">📅 ÚLTIMOS 7 DÍAS</button>
-                    <button class="tab-btn" data-tab="tab-meses">📆 GANANCIAS POR MES</button>
+                    <button class="tab-btn active" data-tab="tab-30dias">📅 ÚLTIMOS 30 DÍAS (Neto)</button>
+                    <button class="tab-btn" data-tab="tab-meses">📆 GANANCIAS POR MES (Neto)</button>
                     <button class="tab-btn" data-tab="tab-top">🔥 TOP PRODUCTOS</button>
+                    <button class="tab-btn" data-tab="tab-egresos">💸 EGRESOS</button>
                 </div>
                 <div class="tab-content">
-                    <div id="tab-7dias" class="tab-pane active">
-                        <h3 style="margin-bottom: 15px; color:#667eea;">📊 Ventas de los últimos 7 días</h3>
-                        <div id="ultimos7Dias"><div style="text-align:center;">Cargando...</div></div>
+                    <div id="tab-30dias" class="tab-pane active">
+                        <h3 style="margin-bottom: 18px; color:#667eea;">📊 Ganancias netas de los últimos 30 días (ventas - egresos)</h3>
+                        <div id="ultimos30Dias"><div style="text-align:center;">Cargando...</div></div>
                     </div>
                     <div id="tab-meses" class="tab-pane">
-                        <h3 style="margin-bottom: 15px; color:#667eea;">📊 Seleccione un mes para ver sus ganancias</h3>
+                        <h3 style="margin-bottom: 15px; color:#667eea;">📊 Ganancia neta por mes (ventas - egresos)</h3>
                         <select id="selectorMes" class="mes-selector"><option value="">Seleccionar Mes</option></select>
-                        <div id="totalMes" class="mes-total"><h4>💰 TOTAL RECAUDADO</h4><div class="monto">S/ 0.00</div></div>
+                        <div id="totalMes" class="mes-total"><h4>💰 GANANCIA NETA</h4><div class="monto">S/ 0.00</div></div>
                     </div>
                     <div id="tab-top" class="tab-pane">
-                        <h3 style="margin-bottom: 15px; color:#667eea;">🔥 Productos más vendidos</h3>
+                        <h3 style="margin-bottom: 15px; color:#667eea;">🔥 Productos más vendidos (por cantidad)</h3>
                         <div class="top-buttons">
-                            <button id="btnTop7Dias" class="top-btn active">📆 Últimos 7 días</button>
+                            <button id="btnTop30Dias" class="top-btn active">📆 Últimos 30 días</button>
                             <button id="btnTopTodo" class="top-btn">📊 Todo el historial</button>
                         </div>
                         <div id="topProductosLista"><div style="text-align:center;">Cargando...</div></div>
+                    </div>
+                    <div id="tab-egresos" class="tab-pane">
+                        <h3 style="margin-bottom: 15px; color:#667eea;">💸 Registro de Egresos (Gastos)</h3>
+                        <div style="margin-bottom: 20px;">
+                            <button id="btnNuevoEgreso" style="background: #dc3545;">➕ Nuevo Egreso</button>
+                        </div>
+                        <div id="listaEgresos" style="max-height: 400px; overflow-y: auto;">
+                            <div style="text-align:center;">Cargando egresos...</div>
+                        </div>
+                        <div class="total-egresos-dia" style="margin-top: 20px; background: #6c757d;">
+                            💰 TOTAL EGRESOS GENERAL: S/ <span id="totalEgresosGeneral">0.00</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -500,19 +795,31 @@ th { background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; }
     </div>
 </div>
 
+<!-- MODALES -->
 <div id="modalPropina" class="modal">
     <div class="modal-contenido">
         <h3>💝 Agregar Propina</h3>
-        <input type="number" id="inputPropina" step="0.50" placeholder="Monto de propina" style="width:100%; margin:10px 0;">
+        <input type="number" id="inputPropina" step="0.50" placeholder="Monto de propina" style="width:100%; margin:15px 0; border-radius: 60px;">
         <button id="btnAplicarPropina">Aplicar Propina</button>
         <button id="btnCancelarPropina">Cancelar</button>
+    </div>
+</div>
+
+<div id="modalEgreso" class="modal">
+    <div class="modal-contenido">
+        <h3>💸 Registrar Egreso</h3>
+        <input type="text" id="egresoConcepto" placeholder="Concepto (ej: Compra de pollo)" style="width:100%; margin:10px 0; border-radius: 60px;">
+        <input type="number" id="egresoMonto" step="0.50" placeholder="Monto S/" style="width:100%; margin:10px 0; border-radius: 60px;">
+        <input type="date" id="egresoFecha" style="width:100%; margin:10px 0; border-radius: 60px;">
+        <button id="btnGuardarEgreso" style="background: #28a745;">Guardar Egreso</button>
+        <button id="btnCancelarEgreso">Cancelar</button>
     </div>
 </div>
 
 <div id="modalNotificacion" class="modal">
     <div class="modal-contenido">
         <h3 id="notifTitulo">✅ Notificación</h3>
-        <p id="notifMensaje"></p>
+        <p id="notifMensaje" style="margin:15px 0;"></p>
         <button id="btnCerrarNotificacion">Aceptar</button>
     </div>
 </div>
@@ -539,10 +846,81 @@ function formatDateToDMY(date) {
     return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 }
 
-// ==================== EXPORTAR TODO (COMPLETO) ====================
+// ==================== MANEJO DE EGRESOS ====================
+let egresos = JSON.parse(localStorage.getItem('egresos')) || [];
+
+function guardarEgresos() {
+    localStorage.setItem('egresos', JSON.stringify(egresos));
+}
+
+function agregarEgreso(concepto, monto, fecha) {
+    if (!concepto || !monto || monto <= 0) return false;
+    let fechaObj = fecha ? new Date(fecha) : getPeruDateObject();
+    let fechaStr = formatDateToDMY(fechaObj);
+    egresos.unshift({
+        id: Date.now(),
+        concepto: concepto,
+        monto: parseFloat(monto),
+        fecha: fechaStr,
+        timestamp: fechaObj.getTime()
+    });
+    guardarEgresos();
+    actualizarListaEgresos();
+    actualizarResumenDelDia();
+    actualizarUltimos30Dias();
+    actualizarSelectorMeses();
+    if (document.getElementById('selectorMes').value) actualizarTotalMes();
+    return true;
+}
+
+function eliminarEgreso(id) {
+    egresos = egresos.filter(e => e.id !== id);
+    guardarEgresos();
+    actualizarListaEgresos();
+    actualizarResumenDelDia();
+    actualizarUltimos30Dias();
+    if (document.getElementById('selectorMes').value) actualizarTotalMes();
+}
+
+function actualizarListaEgresos() {
+    let container = document.getElementById('listaEgresos');
+    if (!container) return;
+    if (egresos.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:20px;">No hay egresos registrados</div>';
+        document.getElementById('totalEgresosGeneral').innerText = '0.00';
+        return;
+    }
+    let totalGeneral = 0;
+    let html = '';
+    egresos.forEach(eg => {
+        totalGeneral += eg.monto;
+        html += `
+            <div class="egreso-item">
+                <div class="egreso-concepto">${eg.concepto}</div>
+                <div class="egreso-monto">S/ ${eg.monto.toFixed(2)}</div>
+                <div class="egreso-fecha">${eg.fecha}</div>
+                <button class="btn-eliminar-egreso" onclick="eliminarEgreso(${eg.id})">🗑️</button>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+    document.getElementById('totalEgresosGeneral').innerText = totalGeneral.toFixed(2);
+}
+
+function getTotalEgresosPorFecha(fechaStr) {
+    return egresos.filter(e => e.fecha === fechaStr).reduce((sum, e) => sum + e.monto, 0);
+}
+
+function getGananciaNetaPorFecha(fechaStr) {
+    let ventasDelDia = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaStr);
+    let totalVentas = ventasDelDia.reduce((sum, v) => sum + v.total, 0);
+    let totalEgresos = getTotalEgresosPorFecha(fechaStr);
+    return totalVentas - totalEgresos;
+}
+
+// ==================== EXPORTAR EXCEL ====================
 function exportarExcelCompleto() {
     let workbook = XLSX.utils.book_new();
-    
     let resumenProductos = {};
     historialVentas.forEach(venta => {
         venta.items.forEach(item => {
@@ -553,16 +931,13 @@ function exportarExcelCompleto() {
             resumenProductos[item.producto].total += item.total;
         });
     });
-    
     let productosOrdenados = Object.keys(resumenProductos).map(nombre => ({
         Producto: nombre,
         Cantidad: resumenProductos[nombre].cantidad,
         Total: resumenProductos[nombre].total,
         "Precio Promedio": resumenProductos[nombre].total / resumenProductos[nombre].cantidad
     })).sort((a, b) => b.Cantidad - a.Cantidad);
-    
-    let hojaResumen = XLSX.utils.json_to_sheet(productosOrdenados);
-    XLSX.utils.book_append_sheet(workbook, hojaResumen, "Resumen por Producto");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(productosOrdenados), "Resumen por Producto");
     
     let ventasDetalladas = [];
     historialVentas.forEach(venta => {
@@ -581,20 +956,20 @@ function exportarExcelCompleto() {
         });
     });
     ventasDetalladas.sort((a, b) => b["N° Venta"] - a["N° Venta"]);
-    let hojaDetallada = XLSX.utils.json_to_sheet(ventasDetalladas);
-    XLSX.utils.book_append_sheet(workbook, hojaDetallada, "Ventas Detalladas");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(ventasDetalladas), "Ventas Detalladas");
     
-    let totalGeneral = 0;
+    let totalGeneral = historialVentas.reduce((sum, v) => sum + v.total, 0);
     let totalUnidades = 0;
     let metodos = { Efectivo: 0, Yape: 0, Plin: 0, Tarjeta: 0 };
     historialVentas.forEach(venta => {
-        totalGeneral += venta.total;
         if(metodos[venta.metodoPago] !== undefined) metodos[venta.metodoPago] += venta.total;
-        venta.items.forEach(item => { totalUnidades += item.cantidad; });
+        venta.items.forEach(item => totalUnidades += item.cantidad);
     });
-    
+    let totalEgresosGeneral = egresos.reduce((sum, e) => sum + e.monto, 0);
     let totalesData = [
-        { Concepto: "TOTAL RECAUDADO GENERAL", Monto: `S/ ${totalGeneral.toFixed(2)}` },
+        { Concepto: "TOTAL VENTAS", Monto: `S/ ${totalGeneral.toFixed(2)}` },
+        { Concepto: "TOTAL EGRESOS", Monto: `S/ ${totalEgresosGeneral.toFixed(2)}` },
+        { Concepto: "GANANCIA NETA", Monto: `S/ ${(totalGeneral - totalEgresosGeneral).toFixed(2)}` },
         { Concepto: "TOTAL UNIDADES VENDIDAS", Monto: totalUnidades },
         { Concepto: "TOTAL VENTAS REGISTRADAS", Monto: historialVentas.length },
         { Concepto: "--- MÉTODOS DE PAGO ---", Monto: "" },
@@ -603,113 +978,77 @@ function exportarExcelCompleto() {
         { Concepto: "Plin", Monto: `S/ ${metodos.Plin.toFixed(2)}` },
         { Concepto: "Tarjeta", Monto: `S/ ${metodos.Tarjeta.toFixed(2)}` }
     ];
-    let hojaTotales = XLSX.utils.json_to_sheet(totalesData);
-    XLSX.utils.book_append_sheet(workbook, hojaTotales, "Totales Generales");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(totalesData), "Totales Generales");
     
-    let top10 = productosOrdenados.slice(0, 10).map((p, idx) => ({
-        Posición: idx + 1,
-        Producto: p.Producto,
-        "Cantidad Vendida": p.Cantidad,
-        "Total Recaudado": `S/ ${p.Total.toFixed(2)}`
-    }));
-    let hojaTop = XLSX.utils.json_to_sheet(top10);
-    XLSX.utils.book_append_sheet(workbook, hojaTop, "Top 10 Productos");
-    
-    let ventasPorDia = {};
+    let netoPorDia = {};
     historialVentas.forEach(venta => {
         let fecha = venta.fecha.split(' ')[0];
-        if(!ventasPorDia[fecha]) {
-            ventasPorDia[fecha] = { cantidadVentas: 0, unidades: 0, total: 0 };
-        }
-        ventasPorDia[fecha].cantidadVentas++;
-        ventasPorDia[fecha].total += venta.total;
-        venta.items.forEach(item => { ventasPorDia[fecha].unidades += item.cantidad; });
+        if(!netoPorDia[fecha]) netoPorDia[fecha] = { ventas: 0, egresos: 0 };
+        netoPorDia[fecha].ventas += venta.total;
     });
-    
-    let diasOrdenados = Object.keys(ventasPorDia).sort((a,b) => {
+    egresos.forEach(egreso => {
+        if(!netoPorDia[egreso.fecha]) netoPorDia[egreso.fecha] = { ventas: 0, egresos: 0 };
+        netoPorDia[egreso.fecha].egresos += egreso.monto;
+    });
+    let diasOrdenados = Object.keys(netoPorDia).sort((a,b) => {
         let [da, ma, aa] = a.split('/');
         let [db, mb, ab] = b.split('/');
         return new Date(ab, mb-1, db) - new Date(aa, ma-1, da);
     });
-    
-    let ventasPorDiaData = diasOrdenados.map(fecha => ({
+    let netoDiasData = diasOrdenados.map(fecha => ({
         Fecha: fecha,
-        "Cantidad de Ventas": ventasPorDia[fecha].cantidadVentas,
-        "Unidades Vendidas": ventasPorDia[fecha].unidades,
-        "Total Recaudado": `S/ ${ventasPorDia[fecha].total.toFixed(2)}`
+        "Ventas": `S/ ${netoPorDia[fecha].ventas.toFixed(2)}`,
+        "Egresos": `S/ ${netoPorDia[fecha].egresos.toFixed(2)}`,
+        "Ganancia Neta": `S/ ${(netoPorDia[fecha].ventas - netoPorDia[fecha].egresos).toFixed(2)}`
     }));
-    let hojaDias = XLSX.utils.json_to_sheet(ventasPorDiaData);
-    XLSX.utils.book_append_sheet(workbook, hojaDias, "Ventas por Día");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(netoDiasData), "Neto por Día");
     
-    let gananciasPorMes = {};
-    historialVentas.forEach(venta => {
-        let fecha = new Date(venta.fechaObjPeru || venta.fechaObj);
-        let mesKey = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`;
-        let nombreMes = fecha.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-        if(!gananciasPorMes[mesKey]) {
-            gananciasPorMes[mesKey] = { mes: nombreMes, total: 0, ventas: 0 };
-        }
-        gananciasPorMes[mesKey].total += venta.total;
-        gananciasPorMes[mesKey].ventas++;
-    });
-    
-    let mesesData = Object.keys(gananciasPorMes).sort().reverse().map(key => ({
-        Mes: gananciasPorMes[key].mes,
-        "Cantidad de Ventas": gananciasPorMes[key].ventas,
-        "Total Recaudado": `S/ ${gananciasPorMes[key].total.toFixed(2)}`
-    }));
-    let hojaMeses = XLSX.utils.json_to_sheet(mesesData);
-    XLSX.utils.book_append_sheet(workbook, hojaMeses, "Ganancias por Mes");
+    let egresosData = egresos.map(e => ({ Concepto: e.concepto, Monto: `S/ ${e.monto.toFixed(2)}`, Fecha: e.fecha }));
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(egresosData), "Egresos");
     
     let fechaActual = getPeruDateTimeString().split(' ')[0].replace(/\//g, '-');
     XLSX.writeFile(workbook, `Reporte_Completo_${fechaActual}.xlsx`);
-    mostrarNotificacion("📊 Exportación Exitosa", "Archivo Excel completo generado con 6 hojas");
+    mostrarNotificacion("📊 Exportación Exitosa", "Archivo Excel completo generado con 5 hojas");
 }
 
-// ==================== EXPORTAR SOLO EL DÍA SELECCIONADO ====================
 function exportarExcelDia() {
     let fechaInput = document.getElementById('filtroFecha').value;
-    
     if(!fechaInput) {
         mostrarNotificacion("⚠️ Atención", "Primero busque una fecha (dd/mm/aaaa) o use 'Ver Hoy'");
         return;
     }
-    
     let partes = fechaInput.split('/');
     if(partes.length !== 3) {
         mostrarNotificacion("❌ Error", "Formato de fecha inválido. Use dd/mm/aaaa");
         return;
     }
-    
     let fechaBusqueda = new Date(partes[2], partes[1]-1, partes[0]);
     let fechaStr = formatDateToDMY(fechaBusqueda);
-    
     let ventasDelDia = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaStr);
-    
-    if(ventasDelDia.length === 0) {
-        mostrarNotificacion("⚠️ Sin datos", `No hay ventas registradas en la fecha ${fechaStr}`);
+    let egresosDelDia = egresos.filter(e => e.fecha === fechaStr);
+    if(ventasDelDia.length === 0 && egresosDelDia.length === 0) {
+        mostrarNotificacion("⚠️ Sin datos", `No hay ventas ni egresos en la fecha ${fechaStr}`);
         return;
     }
-    
     let workbook = XLSX.utils.book_new();
-    
-    // Resumen del día
-    let totalDia = ventasDelDia.reduce((sum, v) => sum + v.total, 0);
+    let totalVentas = ventasDelDia.reduce((sum, v) => sum + v.total, 0);
+    let totalEgresos = egresosDelDia.reduce((sum, e) => sum + e.monto, 0);
     let resumenDia = [{
         "Fecha": fechaStr,
         "Total Ventas": ventasDelDia.length,
-        "Total Recaudado": `S/ ${totalDia.toFixed(2)}`
+        "Monto Ventas": `S/ ${totalVentas.toFixed(2)}`,
+        "Total Egresos": egresosDelDia.length,
+        "Monto Egresos": `S/ ${totalEgresos.toFixed(2)}`,
+        "Ganancia Neta": `S/ ${(totalVentas - totalEgresos).toFixed(2)}`
     }];
-    let hojaResumen = XLSX.utils.json_to_sheet(resumenDia);
-    XLSX.utils.book_append_sheet(workbook, hojaResumen, "Resumen del Día");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(resumenDia), "Resumen del Día");
     
-    // Ventas detalladas del día
     let ventasDetalladas = [];
     ventasDelDia.forEach(venta => {
         venta.items.forEach(item => {
             ventasDetalladas.push({
                 "N° Venta": venta.id,
-                Hora: venta.fecha.split(' ')[1] || "00:00:00",
+                Hora: venta.fecha.split(' ')[1],
                 Producto: item.producto,
                 Cantidad: item.cantidad,
                 "Precio Unitario": item.precio,
@@ -719,110 +1058,55 @@ function exportarExcelDia() {
             });
         });
     });
-    ventasDetalladas.sort((a, b) => b["N° Venta"] - a["N° Venta"]);
-    let hojaDetallada = XLSX.utils.json_to_sheet(ventasDetalladas);
-    XLSX.utils.book_append_sheet(workbook, hojaDetallada, "Ventas del Día");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(ventasDetalladas), "Ventas del Día");
     
-    // Resumen por producto del día
-    let resumenProductos = {};
-    ventasDelDia.forEach(venta => {
-        venta.items.forEach(item => {
-            if(!resumenProductos[item.producto]) {
-                resumenProductos[item.producto] = { cantidad: 0, total: 0 };
-            }
-            resumenProductos[item.producto].cantidad += item.cantidad;
-            resumenProductos[item.producto].total += item.total;
-        });
-    });
+    let egresosData = egresosDelDia.map(e => ({ Concepto: e.concepto, Monto: `S/ ${e.monto.toFixed(2)}` }));
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(egresosData), "Egresos del Día");
     
-    let productosDia = Object.keys(resumenProductos).map(nombre => ({
-        Producto: nombre,
-        "Cantidad Vendida": resumenProductos[nombre].cantidad,
-        "Total": `S/ ${resumenProductos[nombre].total.toFixed(2)}`
-    })).sort((a, b) => b["Cantidad Vendida"] - a["Cantidad Vendida"]);
-    
-    let hojaProductos = XLSX.utils.json_to_sheet(productosDia);
-    XLSX.utils.book_append_sheet(workbook, hojaProductos, "Productos del Día");
-    
-    // Métodos de pago del día
-    let metodosDia = { Efectivo: 0, Yape: 0, Plin: 0, Tarjeta: 0 };
-    ventasDelDia.forEach(venta => {
-        if(metodosDia[venta.metodoPago] !== undefined) {
-            metodosDia[venta.metodoPago] += venta.total;
-        }
-    });
-    
-    let metodosData = Object.keys(metodosDia).map(metodo => ({
-        "Método de Pago": metodo,
-        "Total": `S/ ${metodosDia[metodo].toFixed(2)}`
-    }));
-    let hojaMetodos = XLSX.utils.json_to_sheet(metodosData);
-    XLSX.utils.book_append_sheet(workbook, hojaMetodos, "Métodos de Pago");
-    
-    let fechaExport = fechaStr.replace(/\//g, '-');
-    XLSX.writeFile(workbook, `Reporte_Dia_${fechaExport}.xlsx`);
-    mostrarNotificacion("📅 Exportación Exitosa", `Se exportaron ${ventasDelDia.length} ventas del día ${fechaStr}`);
+    XLSX.writeFile(workbook, `Reporte_Dia_${fechaStr.replace(/\//g, '-')}.xlsx`);
+    mostrarNotificacion("📅 Exportación Exitosa", `Se exportaron ${ventasDelDia.length} ventas y ${egresosDelDia.length} egresos`);
 }
 
-// ==================== PESTAÑAS ====================
-function initTabs() {
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabId = btn.getAttribute('data-tab');
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabPanes.forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-            if(tabId === 'tab-7dias') actualizarUltimos7Dias();
-            if(tabId === 'tab-meses') actualizarSelectorMeses();
-            if(tabId === 'tab-top') actualizarTopProductos();
-        });
-    });
-}
-
-function actualizarUltimos7Dias() {
-    let ventasPorFecha = {};
-    historialVentas.forEach(venta => {
-        let fecha = new Date(venta.fechaObjPeru || venta.fechaObj);
-        let fechaKey = formatDateToDMY(fecha);
-        if(!ventasPorFecha[fechaKey]) ventasPorFecha[fechaKey] = { total: 0 };
-        ventasPorFecha[fechaKey].total += venta.total;
-    });
-    
+// ==================== ACTUALIZACIONES CON NETO ====================
+function actualizarUltimos30Dias() {
     let hoy = getPeruDateObject();
-    let ultimos7 = [];
-    for(let i = 6; i >= 0; i--) {
+    let ultimos30 = [];
+    for(let i = 29; i >= 0; i--) {
         let fecha = new Date(hoy);
         fecha.setDate(hoy.getDate() - i);
         let fechaKey = formatDateToDMY(fecha);
-        let total = ventasPorFecha[fechaKey] ? ventasPorFecha[fechaKey].total : 0;
-        ultimos7.push({ fecha: fechaKey, total: total });
+        let neto = getGananciaNetaPorFecha(fechaKey);
+        ultimos30.push({ fecha: fechaKey, neto: neto });
     }
-    
-    let maxTotal = Math.max(...ultimos7.map(d => d.total), 1);
+    let maxNeto = Math.max(...ultimos30.map(d => d.neto), 1);
     let html = '';
-    ultimos7.forEach(dia => {
-        let porcentaje = (dia.total / maxTotal) * 100;
-        html += `<div class="dia-item"><div><div class="dia-fecha">${dia.fecha}</div><div class="barra-progreso"><div class="barra" style="width: ${porcentaje}%;"></div></div></div><div class="dia-total">S/ ${dia.total.toFixed(2)}</div></div>`;
+    ultimos30.forEach(dia => {
+        let porcentaje = (dia.neto / maxNeto) * 100;
+        let colorBarra = dia.neto >= 0 ? "linear-gradient(135deg, #28a745, #20c997)" : "linear-gradient(135deg, #dc3545, #c82333)";
+        html += `<div class="dia-item">
+                    <div>
+                        <div class="dia-fecha">${dia.fecha}</div>
+                        <div class="barra-progreso"><div class="barra" style="width: ${porcentaje}%; background: ${colorBarra};"></div></div>
+                    </div>
+                    <div class="dia-total" style="color: ${dia.neto >= 0 ? '#2c7a4d' : '#dc3545'};">S/ ${dia.neto.toFixed(2)}</div>
+                 </div>`;
     });
-    document.getElementById('ultimos7Dias').innerHTML = html;
+    document.getElementById('ultimos30Dias').innerHTML = html;
 }
 
 function actualizarSelectorMeses() {
     let mesesSet = new Set();
     historialVentas.forEach(venta => {
         let fecha = new Date(venta.fechaObjPeru || venta.fechaObj);
-        let mesKey = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`;
-        mesesSet.add(mesKey);
+        mesesSet.add(`${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`);
     });
-    
+    egresos.forEach(egreso => {
+        let [dia, mes, año] = egreso.fecha.split('/');
+        mesesSet.add(`${año}-${mes}`);
+    });
     let selector = document.getElementById('selectorMes');
     let opcionesActuales = Array.from(selector.options).map(o => o.value);
     let mesesArray = Array.from(mesesSet).sort().reverse();
-    
     mesesArray.forEach(mes => {
         if(!opcionesActuales.includes(mes)) {
             let [year, month] = mes.split('-');
@@ -838,97 +1122,37 @@ function actualizarSelectorMeses() {
 function actualizarTotalMes() {
     let mesSeleccionado = document.getElementById('selectorMes').value;
     if(!mesSeleccionado) {
-        document.getElementById('totalMes').innerHTML = '<h4>💰 TOTAL RECAUDADO</h4><div class="monto">Seleccione un mes</div>';
+        document.getElementById('totalMes').innerHTML = '<h4>💰 GANANCIA NETA</h4><div class="monto">Seleccione un mes</div>';
         return;
     }
-    
-    let total = 0;
+    let [year, month] = mesSeleccionado.split('-');
+    let totalVentasMes = 0;
     historialVentas.forEach(venta => {
         let fecha = new Date(venta.fechaObjPeru || venta.fechaObj);
-        let mesKey = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`;
-        if(mesKey === mesSeleccionado) total += venta.total;
+        if(fecha.getFullYear() == year && fecha.getMonth()+1 == month) {
+            totalVentasMes += venta.total;
+        }
     });
-    
-    let [year, month] = mesSeleccionado.split('-');
+    let totalEgresosMes = 0;
+    egresos.forEach(egreso => {
+        let [d, m, a] = egreso.fecha.split('/');
+        if(a == year && m == month) totalEgresosMes += egreso.monto;
+    });
+    let neto = totalVentasMes - totalEgresosMes;
     let nombreMes = new Date(year, month-1).toLocaleString('es-ES', { month: 'long' });
-    document.getElementById('totalMes').innerHTML = `<h4>📊 ${nombreMes} ${year}</h4><div class="monto">S/ ${total.toFixed(2)}</div>`;
-}
-
-let topMode = '7dias';
-
-function actualizarTopProductos() {
-    let ventasFiltradas = historialVentas;
-    if(topMode === '7dias') {
-        let hoy = getPeruDateObject();
-        let fechaLimite = new Date(hoy);
-        fechaLimite.setDate(hoy.getDate() - 7);
-        ventasFiltradas = historialVentas.filter(v => {
-            let fechaVenta = new Date(v.fechaObjPeru || v.fechaObj);
-            return fechaVenta >= fechaLimite;
-        });
-    }
-    
-    let resumen = {};
-    ventasFiltradas.forEach(venta => {
-        venta.items.forEach(item => {
-            if(!resumen[item.producto]) resumen[item.producto] = { cantidad: 0, total: 0 };
-            resumen[item.producto].cantidad += item.cantidad;
-            resumen[item.producto].total += item.total;
-        });
-    });
-    
-    let top = Object.keys(resumen).map(nombre => ({
-        nombre, cantidad: resumen[nombre].cantidad, total: resumen[nombre].total
-    })).sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
-    
-    let html = '';
-    if(top.length === 0) {
-        html = '<div style="text-align:center; padding:20px;">No hay ventas en este período</div>';
-    } else {
-        top.forEach((p, idx) => {
-            html += `<div class="producto-top-item"><div><span class="producto-rango">${idx+1}</span><span class="producto-nombre">${p.nombre}</span></div><div><span class="producto-cantidad">${p.cantidad} und</span><span class="producto-total">S/ ${p.total.toFixed(2)}</span></div></div>`;
-        });
-    }
-    document.getElementById('topProductosLista').innerHTML = html;
-}
-
-function actualizarVentasPorProducto() {
-    let hoy = getPeruDateObject();
-    hoy.setHours(0,0,0,0);
-    let ventasHoy = historialVentas.filter(v => { 
-        let fv = new Date(v.fechaObjPeru || v.fechaObj); 
-        fv.setHours(0,0,0,0); 
-        return fv.getTime() === hoy.getTime(); 
-    });
-    
-    let resumen = {};
-    ventasHoy.forEach(venta => {
-        venta.items.forEach(item => {
-            if(!resumen[item.producto]) resumen[item.producto] = { cantidad: 0, total: 0 };
-            resumen[item.producto].cantidad += item.cantidad;
-            resumen[item.producto].total += item.total;
-        });
-    });
-    
-    let productosArray = Object.keys(resumen).map(nombre => ({
-        nombre, cantidad: resumen[nombre].cantidad, total: resumen[nombre].total
-    })).sort((a,b) => b.cantidad - a.cantidad);
-    
-    let tbody = document.getElementById('cuerpoVentasPorProducto');
-    if(productosArray.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay ventas hoy</td></tr>';
-        return;
-    }
-    tbody.innerHTML = productosArray.map(p => `<tr><td style="text-align:left;">${p.nombre}</td><td><span style="background:#ff6b35; color:white; padding:2px 8px; border-radius:20px;">${p.cantidad} und</span></td><td style="font-weight:bold; color:#28a745;">S/ ${p.total.toFixed(2)}</td></tr>`).join('');
+    document.getElementById('totalMes').innerHTML = `<h4>📊 ${nombreMes} ${year}</h4>
+        <div class="monto" style="background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 1rem;">
+            Ventas: S/ ${totalVentasMes.toFixed(2)}<br>
+            Egresos: S/ ${totalEgresosMes.toFixed(2)}<br>
+            <strong>NETO: S/ ${neto.toFixed(2)}</strong>
+        </div>`;
 }
 
 function actualizarResumenDelDia() {
-    let hoy = getPeruDateObject(); hoy.setHours(0,0,0,0);
-    let ventasHoy = historialVentas.filter(v => { 
-        let fv = new Date(v.fechaObjPeru || v.fechaObj); 
-        fv.setHours(0,0,0,0); 
-        return fv.getTime() === hoy.getTime(); 
-    });
+    let hoy = getPeruDateObject();
+    hoy.setHours(0,0,0,0);
+    let fechaHoyStr = formatDateToDMY(hoy);
+    let ventasHoy = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaHoyStr);
     let totales = { Efectivo:0, Yape:0, Plin:0, Tarjeta:0, General:0 };
     ventasHoy.forEach(v => { 
         if(totales[v.metodoPago] !== undefined) totales[v.metodoPago] += v.total;
@@ -939,6 +1163,33 @@ function actualizarResumenDelDia() {
     document.getElementById('totalPlinDia').innerHTML = `S/${totales.Plin.toFixed(2)}`;
     document.getElementById('totalTarjetaDia').innerHTML = `S/${totales.Tarjeta.toFixed(2)}`;
     document.getElementById('totalGeneralDia').innerHTML = `${totales.General.toFixed(2)}`;
+    
+    let egresosHoy = getTotalEgresosPorFecha(fechaHoyStr);
+    document.getElementById('totalEgresosDia').innerHTML = egresosHoy.toFixed(2);
+    let neto = totales.General - egresosHoy;
+    document.getElementById('netoDia').innerHTML = neto.toFixed(2);
+}
+
+// ==================== HISTORIAL Y VENTAS POR PRODUCTO ====================
+function actualizarVentasPorProducto() {
+    let hoy = getPeruDateObject();
+    let fechaHoyStr = formatDateToDMY(hoy);
+    let ventasHoy = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaHoyStr);
+    let resumen = {};
+    ventasHoy.forEach(venta => {
+        venta.items.forEach(item => {
+            if(!resumen[item.producto]) resumen[item.producto] = { cantidad: 0, total: 0 };
+            resumen[item.producto].cantidad += item.cantidad;
+            resumen[item.producto].total += item.total;
+        });
+    });
+    let productosArray = Object.keys(resumen).map(nombre => ({ nombre, cantidad: resumen[nombre].cantidad, total: resumen[nombre].total })).sort((a,b) => b.cantidad - a.cantidad);
+    let tbody = document.getElementById('cuerpoVentasPorProducto');
+    if(productosArray.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay ventas hoy</td></tr>';
+        return;
+    }
+    tbody.innerHTML = productosArray.map(p => `<tr><td style="text-align:left;">${p.nombre}</td><td><span style="background:#ff6b35; color:white; padding:2px 12px; border-radius:40px;">${p.cantidad} und</span></td><td style="font-weight:bold; color:#28a745;">S/ ${p.total.toFixed(2)}</td></tr>`).join('');
 }
 
 function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
@@ -947,7 +1198,6 @@ function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
         div.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas en esta fecha</p>';
         return;
     }
-    
     let totalDia = ventasFiltradas.reduce((sum, v) => sum + v.total, 0);
     if(tituloFecha) {
         document.getElementById('totalDiaSeleccionado').style.display = 'block';
@@ -955,7 +1205,6 @@ function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
     } else {
         document.getElementById('totalDiaSeleccionado').style.display = 'none';
     }
-    
     div.innerHTML = ventasFiltradas.map((v, idx) => `
         <div class="historial-item">
             <div class="historial-header">📅 Venta #${ventasFiltradas.length-idx} - ${v.fecha}</div>
@@ -1020,59 +1269,67 @@ function mostrarTodoHistorial() {
     `).join('');
 }
 
+// ==================== TOP PRODUCTOS ====================
+let topMode = '30dias';
+function actualizarTopProductos() {
+    let ventasFiltradas = historialVentas;
+    if(topMode === '30dias') {
+        let hoy = getPeruDateObject();
+        let fechaLimite = new Date(hoy);
+        fechaLimite.setDate(hoy.getDate() - 30);
+        ventasFiltradas = historialVentas.filter(v => new Date(v.fechaObjPeru || v.fechaObj) >= fechaLimite);
+    }
+    let resumen = {};
+    ventasFiltradas.forEach(venta => {
+        venta.items.forEach(item => {
+            if(!resumen[item.producto]) resumen[item.producto] = { cantidad: 0, total: 0 };
+            resumen[item.producto].cantidad += item.cantidad;
+            resumen[item.producto].total += item.total;
+        });
+    });
+    let top = Object.keys(resumen).map(nombre => ({ nombre, cantidad: resumen[nombre].cantidad, total: resumen[nombre].total })).sort((a,b) => b.cantidad - a.cantidad).slice(0,10);
+    let html = top.length === 0 ? '<div style="text-align:center; padding:20px;">No hay ventas en este período</div>' : top.map((p,idx) => `<div class="producto-top-item"><div><span class="producto-rango">${idx+1}</span><span class="producto-nombre">${p.nombre}</span></div><div><span class="producto-cantidad">${p.cantidad} und</span><span class="producto-total">S/ ${p.total.toFixed(2)}</span></div></div>`).join('');
+    document.getElementById('topProductosLista').innerHTML = html;
+}
+
 // ==================== DATOS DEL SISTEMA ====================
+// Lista de productos (unificada, sin duplicados graves)
 let productos = [
-    { id: 1, nombre: "Cono escolar", precio: 2.50 }, { id: 2, nombre: "Salchicono", precio: 4.00 },
-    { id: 3, nombre: "Promoción", precio: 5.00 }, { id: 4, nombre: "Cono nuggets", precio: 6.50 },
-    { id: 5, nombre: "Salchipapa", precio: 9.00 }, { id: 6, nombre: "Royal", precio: 10.00 },
-    { id: 7, nombre: "Salchi broster", precio: 12.00 }, { id: 8, nombre: "Mega cono", precio: 9.00 },
-    { id: 9, nombre: "Salchi Brasa", precio: 12.00 }, { id: 10, nombre: "Chicha Vaso", precio: 2.50 },
-    { id: 11, nombre: "Agua Cielo", precio: 2.00 }, { id: 12, nombre: "Gaseosas", precio: 4.00 },
-    { id: 13, nombre: "Escocesa", precio: 3.00 }, { id: 14, nombre: "Mini gaseosas", precio: 2.00 },
-    { id: 15, nombre: "Jarra Chicha", precio: 6.00 }, { id: 16, nombre: "Alitas Broster", precio: 13.00 },
-    { id: 17, nombre: "Alitas BBQ", precio: 13.00 }, { id: 18, nombre: "Salchi Mozarella", precio: 13.00 },
-    { id: 19, nombre: "Gaseosa 2.5L", precio: 15.00 }, { id: 20, nombre: "Gaseosa de Vidrio", precio: 8.00 },
-    { id: 21, nombre: "Mounstrito", precio: 14.00 },{ id: 22, nombre: "Salchimixto", precio: 10.00 },
-    { id: 23, nombre: "Salchimixto.", precio: 12.00 },{ id: 24, nombre: "Cono Brasa", precio: 6.00 },
-    { id: 25, nombre: "Jarra Limonada", precio: 8.00 },{ id: 26, nombre: "Promoción", precio: 6.00 },
-    { id: 27, nombre: "Salchibroster", precio: 10.00 },{ id: 28, nombre: "Cono nuggets", precio: 6.00 }
+    { id: 1, nombre: "Cono escolar", precio: 2.50 },
+    { id: 2, nombre: "Salchicono", precio: 4.00 },
+    { id: 3, nombre: "Promoción 5 soles", precio: 5.00 },
+    { id: 4, nombre: "Cono nuggets", precio: 6.50 },
+    { id: 5, nombre: "Salchipapa", precio: 9.00 },
+    { id: 6, nombre: "Royal", precio: 10.00 },
+    { id: 7, nombre: "Salchi broster", precio: 12.00 },
+    { id: 8, nombre: "Mega cono", precio: 9.00 },
+    { id: 9, nombre: "Salchi Brasa", precio: 12.00 },
+    { id: 10, nombre: "Chicha Vaso", precio: 2.50 },
+    { id: 11, nombre: "Agua Cielo", precio: 2.00 },
+    { id: 12, nombre: "Gaseosas", precio: 4.00 },
+    { id: 13, nombre: "Escocesa", precio: 3.00 },
+    { id: 14, nombre: "Mini gaseosas", precio: 2.00 },
+    { id: 15, nombre: "Jarra Chicha", precio: 6.00 },
+    { id: 16, nombre: "Alitas Broster", precio: 13.00 },
+    { id: 17, nombre: "Alitas BBQ", precio: 13.00 },
+    { id: 18, nombre: "Salchi Mozarella", precio: 13.00 },
+    { id: 19, nombre: "Gaseosa 2.5L", precio: 15.00 },
+    { id: 20, nombre: "Gaseosa de Vidrio", precio: 8.00 },
+    { id: 21, nombre: "Mounstrito", precio: 14.00 },
+    { id: 22, nombre: "Salchimixto", precio: 10.00 },
+    { id: 23, nombre: "Salchimixto Especial", precio: 12.00 },
+    { id: 24, nombre: "Cono Brasa", precio: 6.00 },
+    { id: 25, nombre: "Jarra Limonada", precio: 8.00 },
+    { id: 26, nombre: "Promoción 6 soles", precio: 6.00 },
+    { id: 27, nombre: "Salchibroster", precio: 10.00 },
+    { id: 28, nombre: "Cono nuggets pequeño", precio: 6.00 }
 ];
 
 let ventaActual = [];
 let propinaActual = 0;
 let historialVentas = JSON.parse(localStorage.getItem('historialVentas')) || [];
 
-function inicializarSistema() {
-    cargarProductos();
-    cargarCantidades();
-    actualizarResumenDelDia();
-    mostrarTodoHistorial();
-    actualizarVentasPorProducto();
-    actualizarUltimos7Dias();
-    actualizarSelectorMeses();
-    actualizarTopProductos();
-    initTabs();
-    
-    document.getElementById('btnBuscarFecha').onclick = buscarPorFecha;
-    document.getElementById('btnVerHoy').onclick = verHoy;
-    document.getElementById('btnMostrarTodo').onclick = mostrarTodoHistorial;
-    document.getElementById('btnAgregarProducto').onclick = agregarProducto;
-    document.getElementById('btnAgregarPropina').onclick = abrirModalPropina;
-    document.getElementById('btnFinalizarVenta').onclick = finalizarVenta;
-    document.getElementById('btnCancelarVenta').onclick = cancelarVenta;
-    document.getElementById('btnExportarTodo').onclick = exportarExcelCompleto;
-    document.getElementById('btnExportarDia').onclick = exportarExcelDia;
-    document.getElementById('btnAplicarPropina').onclick = agregarPropina;
-    document.getElementById('btnCancelarPropina').onclick = cerrarModalPropina;
-    document.getElementById('btnCerrarNotificacion').onclick = cerrarModalNotificacion;
-    document.getElementById('selectorMes').onchange = actualizarTotalMes;
-    document.getElementById('btnTop7Dias').onclick = () => { topMode = '7dias'; document.getElementById('btnTop7Dias').classList.add('active'); document.getElementById('btnTopTodo').classList.remove('active'); actualizarTopProductos(); };
-    document.getElementById('btnTopTodo').onclick = () => { topMode = 'todo'; document.getElementById('btnTopTodo').classList.add('active'); document.getElementById('btnTop7Dias').classList.remove('active'); actualizarTopProductos(); };
-    
-    document.getElementById('buscarProducto').addEventListener('input', function(e) { cargarProductos(e.target.value); });
-    document.getElementById('producto').addEventListener('change', cargarCantidades);
-}
-
+// ==================== FUNCIONES DEL SISTEMA DE VENTAS ====================
 function cargarProductos(filtro = "") {
     let select = document.getElementById('producto');
     select.innerHTML = '';
@@ -1101,22 +1358,18 @@ function agregarProducto() {
     let producto = productos.find(p => p.id === parseInt(document.getElementById('producto').value));
     let cantidad = parseInt(document.getElementById('cantidad').value);
     let metodo = document.getElementById('metodoPago').value;
-    
     let existente = ventaActual.find(v => v.productoId === producto.id);
     if(existente) {
         existente.cantidad += cantidad;
         existente.total = existente.precio * existente.cantidad;
     } else {
-        ventaActual.push({
-            productoId: producto.id, producto: producto.nombre,
-            precio: producto.precio, cantidad, total: producto.precio * cantidad, metodo
-        });
+        ventaActual.push({ productoId: producto.id, producto: producto.nombre, precio: producto.precio, cantidad, total: producto.precio * cantidad, metodo });
     }
     actualizarTablaVenta();
 }
 
 function actualizarTablaVenta() {
-    let tbody = document.getElementById('tablaVenta');
+    let tbody = document.getElementById('tablaVentaBody');
     tbody.innerHTML = '';
     let subtotal = 0;
     ventaActual.forEach((item, index) => {
@@ -1149,9 +1402,8 @@ function eliminarProducto(index) {
     actualizarTablaVenta();
 }
 
-function abrirModalPropina() { document.getElementById('modalPropina').style.display = 'block'; document.getElementById('inputPropina').focus(); }
+function abrirModalPropina() { document.getElementById('modalPropina').style.display = 'flex'; document.getElementById('inputPropina').focus(); }
 function cerrarModalPropina() { document.getElementById('modalPropina').style.display = 'none'; document.getElementById('inputPropina').value = ''; }
-
 function agregarPropina() {
     let propina = parseFloat(document.getElementById('inputPropina').value);
     if(!isNaN(propina) && propina >= 0) {
@@ -1179,9 +1431,10 @@ function finalizarVenta() {
     actualizarResumenDelDia();
     mostrarTodoHistorial();
     actualizarVentasPorProducto();
-    actualizarUltimos7Dias();
+    actualizarUltimos30Dias();
     actualizarSelectorMeses();
     actualizarTopProductos();
+    if (document.getElementById('selectorMes').value) actualizarTotalMes();
 }
 
 function cancelarVenta() {
@@ -1190,18 +1443,154 @@ function cancelarVenta() {
 
 function imprimirBoleta(venta) {
     let ventana = window.open('', '_blank', 'width=300,height=500');
-    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta</title><style>body{font-family:monospace;padding:15px;width:280px;margin:0 auto;text-align:center;}hr{border-top:1px dashed #000;}</style></head><body><div><strong>EL IDEAL</strong><br>Pollería & Salchipaperías<hr>📅 ${venta.fecha}<hr>${venta.items.map(i => `<div>${i.producto} x${i.cantidad} = S/${i.total.toFixed(2)}</div>`).join('')}<hr>Subtotal: S/${venta.subtotal.toFixed(2)}<br>${venta.propina>0?`Propina: S/${venta.propina.toFixed(2)}<br>`:''}<strong>TOTAL: S/${venta.total.toFixed(2)}</strong><hr>${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>¡Gracias por su compra! reclame su boleta de Compra<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
+    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta</title><style>body{font-family:monospace;padding:15px;width:280px;margin:0 auto;text-align:center;}hr{border-top:1px dashed #000;}</style></head><body><div><strong>EL IDEAL</strong><br>Pollería & Salchipaperías<hr>📅 ${venta.fecha}<hr>${venta.items.map(i => `<div>${i.producto} x${i.cantidad} = S/${i.total.toFixed(2)}</div>`).join('')}<hr>Subtotal: S/${venta.subtotal.toFixed(2)}<br>${venta.propina>0?`Propina: S/${venta.propina.toFixed(2)}<br>`:''}<strong>TOTAL: S/${venta.total.toFixed(2)}</strong><hr>${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>¡Gracias por su compra!<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
     ventana.document.write(contenido);
 }
 
 function mostrarNotificacion(titulo, mensaje) {
     document.getElementById('notifTitulo').innerHTML = titulo;
     document.getElementById('notifMensaje').innerHTML = mensaje;
-    document.getElementById('modalNotificacion').style.display = 'block';
+    document.getElementById('modalNotificacion').style.display = 'flex';
     setTimeout(() => cerrarModalNotificacion(), 3000);
 }
 function cerrarModalNotificacion() { document.getElementById('modalNotificacion').style.display = 'none'; }
 
+function abrirModalEgreso() {
+    document.getElementById('modalEgreso').style.display = 'flex';
+    document.getElementById('egresoConcepto').value = '';
+    document.getElementById('egresoMonto').value = '';
+    let hoy = getPeruDateObject();
+    let yyyy = hoy.getFullYear();
+    let mm = String(hoy.getMonth()+1).padStart(2,'0');
+    let dd = String(hoy.getDate()).padStart(2,'0');
+    document.getElementById('egresoFecha').value = `${yyyy}-${mm}-${dd}`;
+}
+function cerrarModalEgreso() { document.getElementById('modalEgreso').style.display = 'none'; }
+function guardarEgresoDesdeModal() {
+    let concepto = document.getElementById('egresoConcepto').value.trim();
+    let monto = parseFloat(document.getElementById('egresoMonto').value);
+    let fecha = document.getElementById('egresoFecha').value;
+    if (!concepto) { mostrarNotificacion("Error", "Ingrese un concepto"); return; }
+    if (isNaN(monto) || monto <= 0) { mostrarNotificacion("Error", "Monto inválido"); return; }
+    if (agregarEgreso(concepto, monto, fecha)) {
+        cerrarModalEgreso();
+        mostrarNotificacion("✅ Egreso registrado", `Se registró "${concepto}" por S/ ${monto.toFixed(2)}`);
+    }
+}
+
+// ==================== AVISO PROGRAMADO DESDE JSON ====================
+async function cargarAvisoGitHub() {
+    try {
+        // Agregamos timestamp para evitar caché
+        const url = `aviso.json?t=${new Date().getTime()}`;
+        const respuesta = await fetch(url);
+        if (!respuesta.ok) {
+            document.getElementById('avisoContainer').style.display = 'none';
+            return;
+        }
+        const aviso = await respuesta.json();
+        
+        const ahora = new Date();
+        let mostrar = false;
+        
+        if (aviso.inicio && aviso.fin) {
+            const inicio = new Date(aviso.inicio);
+            const fin = new Date(aviso.fin);
+            if (ahora >= inicio && ahora <= fin) {
+                mostrar = true;
+            }
+        } else if (aviso.texto) {
+            mostrar = true;
+        }
+        
+        if (mostrar && aviso.texto && aviso.texto.trim() !== "") {
+            document.getElementById('avisoTexto').innerHTML = aviso.texto;
+            document.getElementById('avisoContainer').style.display = 'flex';
+        } else {
+            document.getElementById('avisoContainer').style.display = 'none';
+        }
+    } catch (error) {
+        console.error("Error al cargar aviso:", error);
+        document.getElementById('avisoContainer').style.display = 'none';
+    }
+}
+
+function cerrarAvisoManual() {
+    document.getElementById('avisoContainer').style.display = 'none';
+    sessionStorage.setItem('avisoCerrado', 'true');
+}
+
+function inicializarAviso() {
+    if (sessionStorage.getItem('avisoCerrado') === 'true') {
+        document.getElementById('avisoContainer').style.display = 'none';
+        return;
+    }
+    cargarAvisoGitHub();
+    setInterval(() => {
+        if (sessionStorage.getItem('avisoCerrado') !== 'true') {
+            cargarAvisoGitHub();
+        }
+    }, 300000);
+}
+
+// ==================== INICIALIZACIÓN Y TABS ====================
+function initTabs() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            if(tabId === 'tab-30dias') actualizarUltimos30Dias();
+            if(tabId === 'tab-meses') actualizarSelectorMeses();
+            if(tabId === 'tab-top') actualizarTopProductos();
+            if(tabId === 'tab-egresos') actualizarListaEgresos();
+        });
+    });
+}
+
+function inicializarSistema() {
+    cargarProductos();
+    cargarCantidades();
+    actualizarResumenDelDia();
+    mostrarTodoHistorial();
+    actualizarVentasPorProducto();
+    actualizarUltimos30Dias();
+    actualizarSelectorMeses();
+    actualizarTopProductos();
+    actualizarListaEgresos();
+    initTabs();
+    inicializarAviso();
+    
+    document.getElementById('btnBuscarFecha').onclick = buscarPorFecha;
+    document.getElementById('btnVerHoy').onclick = verHoy;
+    document.getElementById('btnMostrarTodo').onclick = mostrarTodoHistorial;
+    document.getElementById('btnAgregarProducto').onclick = agregarProducto;
+    document.getElementById('btnAgregarPropina').onclick = abrirModalPropina;
+    document.getElementById('btnFinalizarVenta').onclick = finalizarVenta;
+    document.getElementById('btnCancelarVenta').onclick = cancelarVenta;
+    document.getElementById('btnExportarTodo').onclick = exportarExcelCompleto;
+    document.getElementById('btnExportarDia').onclick = exportarExcelDia;
+    document.getElementById('btnAplicarPropina').onclick = agregarPropina;
+    document.getElementById('btnCancelarPropina').onclick = cerrarModalPropina;
+    document.getElementById('btnCerrarNotificacion').onclick = cerrarModalNotificacion;
+    document.getElementById('selectorMes').onchange = actualizarTotalMes;
+    document.getElementById('btnTop30Dias').onclick = () => { topMode = '30dias'; document.getElementById('btnTop30Dias').classList.add('active'); document.getElementById('btnTopTodo').classList.remove('active'); actualizarTopProductos(); };
+    document.getElementById('btnTopTodo').onclick = () => { topMode = 'todo'; document.getElementById('btnTopTodo').classList.add('active'); document.getElementById('btnTop30Dias').classList.remove('active'); actualizarTopProductos(); };
+    
+    document.getElementById('btnRegistrarEgreso').onclick = abrirModalEgreso;
+    document.getElementById('btnNuevoEgreso').onclick = abrirModalEgreso;
+    document.getElementById('btnGuardarEgreso').onclick = guardarEgresoDesdeModal;
+    document.getElementById('btnCancelarEgreso').onclick = cerrarModalEgreso;
+    
+    document.getElementById('buscarProducto').addEventListener('input', e => cargarProductos(e.target.value));
+    document.getElementById('producto').addEventListener('change', cargarCantidades);
+    
+    document.getElementById('btnCerrarAviso').addEventListener('click', cerrarAvisoManual);
+}
+
+// ==================== SEGURIDAD ====================
 const CONTRASENA_CORRECTA = "hola.hols";
 const SESION_KEY = "sesion_iniciada";
 
