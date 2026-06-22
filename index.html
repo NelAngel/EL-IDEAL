@@ -678,8 +678,8 @@ tr:nth-child(even) {
     <header>
         <div class="logo-container"><img src="1.jpg" alt="Logo El Ideal"></div>
         <div class="header-titles">
-            <h1>🍗 El Ideal - Pollerías & Salchipaperías</h1>
-            <p>Gestión inteligente | Hecho por N-A V2.1</p>
+            <h1> El Ideal - Pollerías & Salchipaperías</h1>
+            <p>Gestión inteligente | Hecho por N-A V2.3</p>
         </div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">🚪 Cerrar Sesión</button>
     </header>
@@ -1549,7 +1549,7 @@ function imprimirBoleta(venta) {
     } else {
         contenido += `${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>`;
     }
-    contenido += `¡Gracias por su compra!<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
+    contenido += `¡Gracias por su compra - Reclame su boleta de compra!<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
     ventana.document.write(contenido);
 }
 
