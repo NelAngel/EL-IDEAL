@@ -304,6 +304,7 @@ tr:nth-child(even) {
 .badge-yape { background: #17a2b8; color: white; }
 .badge-plin { background: #6f42c1; color: white; }
 .badge-tarjeta { background: #fd7e14; color: white; }
+.badge-mixto { background: #6c757d; color: white; }
 
 .btn-eliminar, .btn-editar {
     background: none;
@@ -615,6 +616,19 @@ tr:nth-child(even) {
     margin-top: 10px;
 }
 
+/* === PAGO MIXTO === */
+#pagoMixtoContainer {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 1rem;
+    margin-top: 10px;
+    border: 2px dashed #ced4da;
+}
+#pagoMixtoContainer input {
+    background: white;
+    border: 1px solid #ced4da;
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 860px) {
     body {
@@ -664,7 +678,7 @@ tr:nth-child(even) {
     <header>
         <div class="logo-container"><img src="1.jpg" alt="Logo El Ideal"></div>
         <div class="header-titles">
-            <h1>El Ideal - Pollerías & Salchipaperías</h1>
+            <h1>🍗 El Ideal - Pollerías & Salchipaperías</h1>
             <p>Gestión inteligente | Hecho por N-A V2.1</p>
         </div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">🚪 Cerrar Sesión</button>
@@ -682,7 +696,20 @@ tr:nth-child(even) {
                 <option value="Yape">📱 Yape</option>
                 <option value="Plin">📱 Plin</option>
                 <option value="Tarjeta">💳 Tarjeta</option>
+                <option value="Mixto">🔄 Mixto (varios métodos)</option>
             </select>
+
+            <!-- Contenedor para pagos mixtos -->
+            <div id="pagoMixtoContainer" style="display:none;">
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <input type="number" id="montoEfectivo" step="0.50" placeholder="Efectivo S/" style="flex:1; min-width:100px;">
+                    <input type="number" id="montoYape" step="0.50" placeholder="Yape S/" style="flex:1; min-width:100px;">
+                    <input type="number" id="montoPlin" step="0.50" placeholder="Plin S/" style="flex:1; min-width:100px;">
+                    <input type="number" id="montoTarjeta" step="0.50" placeholder="Tarjeta S/" style="flex:1; min-width:100px;">
+                </div>
+                <small style="color:#666;">La suma debe ser igual al total de la venta.</small>
+            </div>
+
             <button id="btnAgregarProducto">➕ Agregar Producto</button>
             <button id="btnAgregarPropina">💝 Agregar Propina</button>
             <button id="btnRegistrarEgreso" style="background: #dc3545;">💸 Registrar Egreso</button>
@@ -873,6 +900,7 @@ function agregarEgreso(concepto, monto, fecha) {
 }
 
 function eliminarEgreso(id) {
+    if (!confirm("¿Eliminar este egreso?")) return;
     egresos = egresos.filter(e => e.id !== id);
     guardarEgresos();
     actualizarListaEgresos();
@@ -950,7 +978,8 @@ function exportarExcelCompleto() {
                 Subtotal: item.total,
                 Propina: venta.propina,
                 "Total Venta": venta.total,
-                "Método Pago": venta.metodoPago
+                "Método Pago": venta.metodoPago,
+                "Pagos Desglosados": venta.pagos ? venta.pagos.map(p => `${p.metodo}: S/${p.monto.toFixed(2)}`).join('; ') : ''
             });
         });
     });
@@ -961,7 +990,13 @@ function exportarExcelCompleto() {
     let totalUnidades = 0;
     let metodos = { Efectivo: 0, Yape: 0, Plin: 0, Tarjeta: 0 };
     historialVentas.forEach(venta => {
-        if(metodos[venta.metodoPago] !== undefined) metodos[venta.metodoPago] += venta.total;
+        if (venta.pagos && venta.pagos.length > 0) {
+            venta.pagos.forEach(p => {
+                if (metodos[p.metodo] !== undefined) metodos[p.metodo] += p.monto;
+            });
+        } else {
+            if (metodos[venta.metodoPago] !== undefined) metodos[venta.metodoPago] += venta.total;
+        }
         venta.items.forEach(item => totalUnidades += item.cantidad);
     });
     let totalEgresosGeneral = egresos.reduce((sum, e) => sum + e.monto, 0);
@@ -1053,7 +1088,8 @@ function exportarExcelDia() {
                 "Precio Unitario": item.precio,
                 Subtotal: item.total,
                 Propina: venta.propina,
-                "Método Pago": venta.metodoPago
+                "Método Pago": venta.metodoPago,
+                "Pagos": venta.pagos ? venta.pagos.map(p => `${p.metodo}: S/${p.monto.toFixed(2)}`).join('; ') : ''
             });
         });
     });
@@ -1077,10 +1113,10 @@ function actualizarUltimos30Dias() {
         let neto = getGananciaNetaPorFecha(fechaKey);
         ultimos30.push({ fecha: fechaKey, neto: neto });
     }
-    let maxNeto = Math.max(...ultimos30.map(d => d.neto), 1);
+    let maxNeto = Math.max(...ultimos30.map(d => Math.abs(d.neto)), 1);
     let html = '';
     ultimos30.forEach(dia => {
-        let porcentaje = (dia.neto / maxNeto) * 100;
+        let porcentaje = Math.abs(dia.neto) / maxNeto * 100;
         let colorBarra = dia.neto >= 0 ? "linear-gradient(135deg, #28a745, #20c997)" : "linear-gradient(135deg, #dc3545, #c82333)";
         html += `<div class="dia-item">
                     <div>
@@ -1153,8 +1189,14 @@ function actualizarResumenDelDia() {
     let fechaHoyStr = formatDateToDMY(hoy);
     let ventasHoy = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaHoyStr);
     let totales = { Efectivo:0, Yape:0, Plin:0, Tarjeta:0, General:0 };
-    ventasHoy.forEach(v => { 
-        if(totales[v.metodoPago] !== undefined) totales[v.metodoPago] += v.total;
+    ventasHoy.forEach(v => {
+        if (v.pagos && v.pagos.length > 0) {
+            v.pagos.forEach(p => {
+                if (totales[p.metodo] !== undefined) totales[p.metodo] += p.monto;
+            });
+        } else {
+            if (totales[v.metodoPago] !== undefined) totales[v.metodoPago] += v.total;
+        }
         totales.General += v.total;
     });
     document.getElementById('totalEfectivoDia').innerHTML = `S/${totales.Efectivo.toFixed(2)}`;
@@ -1204,7 +1246,14 @@ function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
     } else {
         document.getElementById('totalDiaSeleccionado').style.display = 'none';
     }
-    div.innerHTML = ventasFiltradas.map((v, idx) => `
+    div.innerHTML = ventasFiltradas.map((v, idx) => {
+        let pagosHtml = '';
+        if (v.pagos && v.pagos.length > 0) {
+            pagosHtml = v.pagos.map(p => `${p.metodo}: S/${p.monto.toFixed(2)}`).join(' | ');
+        } else {
+            pagosHtml = `${v.metodoPago}: S/${v.total.toFixed(2)}`;
+        }
+        return `
         <div class="historial-item">
             <div class="historial-header">📅 Venta #${ventasFiltradas.length-idx} - ${v.fecha}</div>
             <div style="padding:10px;">
@@ -1215,12 +1264,12 @@ function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
                         <tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;"><strong>Subtotal</strong></td><td style="text-align:right;"><strong>S/${v.subtotal.toFixed(2)}</strong></td></tr>
                         ${v.propina>0?`<tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;">Propina</td><td style="text-align:right;">S/${v.propina.toFixed(2)}</td></tr>`:''}
                         <tr style="background:#ff6b35; color:white;"><td colspan="3" style="text-align:right;"><strong>TOTAL</strong></td><td style="text-align:right;"><strong>S/${v.total.toFixed(2)}</strong></td></tr>
-                        <tr><td colspan="4" style="text-align:center; background:#e9ecef;"><strong>💰 Método: ${v.metodoPago}</strong></td></tr>
+                        <tr><td colspan="4" style="text-align:center; background:#e9ecef;"><strong>💰 Pagos: ${pagosHtml}</strong></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function buscarPorFecha() {
@@ -1228,6 +1277,7 @@ function buscarPorFecha() {
     let partes = input.split('/');
     if(partes.length !== 3) { mostrarNotificacion("Error", "Use dd/mm/aaaa"); return; }
     let fechaBusqueda = new Date(partes[2], partes[1]-1, partes[0]);
+    if (isNaN(fechaBusqueda.getTime())) { mostrarNotificacion("Error", "Fecha inválida"); return; }
     let fechaStr = formatDateToDMY(fechaBusqueda);
     let ventasFiltradas = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaStr);
     mostrarHistorialFiltrado(ventasFiltradas, fechaStr);
@@ -1249,7 +1299,14 @@ function mostrarTodoHistorial() {
         div.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas registradas</p>';
         return;
     }
-    div.innerHTML = historialVentas.map((v, idx) => `
+    div.innerHTML = historialVentas.map((v, idx) => {
+        let pagosHtml = '';
+        if (v.pagos && v.pagos.length > 0) {
+            pagosHtml = v.pagos.map(p => `${p.metodo}: S/${p.monto.toFixed(2)}`).join(' | ');
+        } else {
+            pagosHtml = `${v.metodoPago}: S/${v.total.toFixed(2)}`;
+        }
+        return `
         <div class="historial-item">
             <div class="historial-header">📅 Venta #${historialVentas.length-idx} - ${v.fecha}</div>
             <div style="padding:10px;">
@@ -1260,12 +1317,12 @@ function mostrarTodoHistorial() {
                         <tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;"><strong>Subtotal</strong></td><td style="text-align:right;"><strong>S/${v.subtotal.toFixed(2)}</strong></td></tr>
                         ${v.propina>0?`<tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;">Propina</td><td style="text-align:right;">S/${v.propina.toFixed(2)}</td></tr>`:''}
                         <tr style="background:#ff6b35; color:white;"><td colspan="3" style="text-align:right;"><strong>TOTAL</strong></td><td style="text-align:right;"><strong>S/${v.total.toFixed(2)}</strong></td></tr>
-                        <tr><td colspan="4" style="text-align:center; background:#e9ecef;"><strong>💰 Método: ${v.metodoPago}</strong></td></tr>
+                        <tr><td colspan="4" style="text-align:center; background:#e9ecef;"><strong>💰 Pagos: ${pagosHtml}</strong></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 // ==================== TOP PRODUCTOS ====================
@@ -1382,7 +1439,7 @@ function actualizarTablaVenta() {
 
 function editarCantidad(index) {
     let nueva = prompt("Nueva cantidad:", ventaActual[index].cantidad);
-    if(nueva && !isNaN(nueva)) {
+    if(nueva && !isNaN(nueva) && parseInt(nueva) > 0) {
         ventaActual[index].cantidad = parseInt(nueva);
         ventaActual[index].total = ventaActual[index].precio * ventaActual[index].cantidad;
         actualizarTablaVenta();
@@ -1414,17 +1471,52 @@ function agregarPropina() {
 function finalizarVenta() {
     if(ventaActual.length === 0) { mostrarNotificacion("⚠️ Venta Vacía", "Agregue productos"); return; }
     let subtotal = parseFloat(document.getElementById('subtotal').innerText);
+    let metodoSeleccionado = document.getElementById('metodoPago').value;
+    let metodoPagoFinal = metodoSeleccionado;
+    let pagosDetalle = [];
+
+    if (metodoSeleccionado === 'Mixto') {
+        let montoEf = parseFloat(document.getElementById('montoEfectivo').value) || 0;
+        let montoYape = parseFloat(document.getElementById('montoYape').value) || 0;
+        let montoPlin = parseFloat(document.getElementById('montoPlin').value) || 0;
+        let montoTarjeta = parseFloat(document.getElementById('montoTarjeta').value) || 0;
+        let totalPagos = montoEf + montoYape + montoPlin + montoTarjeta;
+        let totalVenta = subtotal + propinaActual;
+
+        if (Math.abs(totalPagos - totalVenta) > 0.01) {
+            mostrarNotificacion("❌ Error", "La suma de los pagos no coincide con el total de la venta.");
+            return;
+        }
+
+        if (montoEf > 0) pagosDetalle.push({ metodo: 'Efectivo', monto: montoEf });
+        if (montoYape > 0) pagosDetalle.push({ metodo: 'Yape', monto: montoYape });
+        if (montoPlin > 0) pagosDetalle.push({ metodo: 'Plin', monto: montoPlin });
+        if (montoTarjeta > 0) pagosDetalle.push({ metodo: 'Tarjeta', monto: montoTarjeta });
+
+        metodoPagoFinal = pagosDetalle[0]?.metodo || 'Mixto';
+    } else {
+        pagosDetalle = [{ metodo: metodoSeleccionado, monto: subtotal + propinaActual }];
+    }
+
     let peruDateObj = getPeruTime();
     let ventaCompleta = {
-        id: Date.now(), fecha: getPeruDateTimeString(),
-        fechaObj: peruDateObj, fechaObjPeru: peruDateObj.toISOString(),
-        items: [...ventaActual], subtotal, propina: propinaActual,
-        total: subtotal + propinaActual, metodoPago: ventaActual[0].metodo
+        id: Date.now(),
+        fecha: getPeruDateTimeString(),
+        fechaObj: peruDateObj,
+        fechaObjPeru: peruDateObj.toISOString(),
+        items: [...ventaActual],
+        subtotal: subtotal,
+        propina: propinaActual,
+        total: subtotal + propinaActual,
+        metodoPago: metodoPagoFinal,
+        pagos: pagosDetalle,
+        esMixto: metodoSeleccionado === 'Mixto'
     };
     historialVentas.unshift(ventaCompleta);
     localStorage.setItem('historialVentas', JSON.stringify(historialVentas));
     imprimirBoleta(ventaCompleta);
-    ventaActual = []; propinaActual = 0;
+    ventaActual = [];
+    propinaActual = 0;
     actualizarTablaVenta();
     actualizarResumenDelDia();
     mostrarTodoHistorial();
@@ -1433,6 +1525,14 @@ function finalizarVenta() {
     actualizarSelectorMeses();
     actualizarTopProductos();
     if (document.getElementById('selectorMes').value) actualizarTotalMes();
+
+    // Limpiar campos mixtos
+    document.getElementById('montoEfectivo').value = '';
+    document.getElementById('montoYape').value = '';
+    document.getElementById('montoPlin').value = '';
+    document.getElementById('montoTarjeta').value = '';
+    document.getElementById('pagoMixtoContainer').style.display = 'none';
+    document.getElementById('metodoPago').value = 'Efectivo';
 }
 
 function cancelarVenta() {
@@ -1441,7 +1541,15 @@ function cancelarVenta() {
 
 function imprimirBoleta(venta) {
     let ventana = window.open('', '_blank', 'width=300,height=500');
-    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta</title><style>body{font-family:monospace;padding:15px;width:280px;margin:0 auto;text-align:center;}hr{border-top:1px dashed #000;}</style></head><body><div><strong>EL IDEAL</strong><br>Pollería & Salchipaperías<hr>📅 ${venta.fecha}<hr>${venta.items.map(i => `<div>${i.producto} x${i.cantidad} = S/${i.total.toFixed(2)}</div>`).join('')}<hr>Subtotal: S/${venta.subtotal.toFixed(2)}<br>${venta.propina>0?`Propina: S/${venta.propina.toFixed(2)}<br>`:''}<strong>TOTAL: S/${venta.total.toFixed(2)}</strong><hr>${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>¡Gracias por su compra - Reclame su boleta de Compra!<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
+    let contenido = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Boleta</title><style>body{font-family:monospace;padding:15px;width:280px;margin:0 auto;text-align:center;}hr{border-top:1px dashed #000;}</style></head><body><div><strong>EL IDEAL</strong><br>Pollería & Salchipaperías<hr>📅 ${venta.fecha}<hr>${venta.items.map(i => `<div>${i.producto} x${i.cantidad} = S/${i.total.toFixed(2)}</div>`).join('')}<hr>Subtotal: S/${venta.subtotal.toFixed(2)}<br>${venta.propina>0?`Propina: S/${venta.propina.toFixed(2)}<br>`:''}<strong>TOTAL: S/${venta.total.toFixed(2)}</strong><hr>`;
+    if (venta.pagos && venta.pagos.length > 0) {
+        contenido += `<div style="text-align:left;">Pagos:<br>`;
+        venta.pagos.forEach(p => { contenido += `${p.metodo}: S/${p.monto.toFixed(2)}<br>`; });
+        contenido += `</div><hr>`;
+    } else {
+        contenido += `${venta.metodoPago}: S/${venta.total.toFixed(2)}<hr>`;
+    }
+    contenido += `¡Gracias por su compra!<hr></div><script>window.print();setTimeout(()=>window.close(),1000);<\/script></body></html>`;
     ventana.document.write(contenido);
 }
 
@@ -1489,7 +1597,7 @@ let ultimaNotificacion = 0;
 
 function mostrarToast(mensaje) {
     let ahora = Date.now();
-    if (ahora - ultimaNotificacion < 60000) return; // máximo 1 por minuto
+    if (ahora - ultimaNotificacion < 60000) return;
     ultimaNotificacion = ahora;
     
     let toast = document.createElement('div');
@@ -1541,7 +1649,6 @@ function iniciarCicloToast() {
             mostrarToast(configToast.texto);
         }
     }, intervaloMs);
-    // Mostrar una inmediatamente si está dentro del horario
     if (deberiaMostrarToast()) {
         mostrarToast(configToast.texto);
     }
@@ -1552,9 +1659,8 @@ async function actualizarConfigYReiniciar() {
     iniciarCicloToast();
 }
 
-// Iniciar notificación
 cargarConfigToast().then(() => iniciarCicloToast());
-setInterval(actualizarConfigYReiniciar, 30000); // cada 30 segundos
+setInterval(actualizarConfigYReiniciar, 30000);
 
 // ==================== INICIALIZACIÓN Y TABS ====================
 function initTabs() {
@@ -1585,6 +1691,16 @@ function inicializarSistema() {
     actualizarListaEgresos();
     initTabs();
     
+    // Eventos del método de pago mixto
+    document.getElementById('metodoPago').addEventListener('change', function() {
+        const container = document.getElementById('pagoMixtoContainer');
+        if (this.value === 'Mixto') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    });
+
     document.getElementById('btnBuscarFecha').onclick = buscarPorFecha;
     document.getElementById('btnVerHoy').onclick = verHoy;
     document.getElementById('btnMostrarTodo').onclick = mostrarTodoHistorial;
