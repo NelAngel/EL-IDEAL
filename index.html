@@ -358,22 +358,148 @@ tr:nth-child(even) {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* === HISTORIAL === */
-.historial-item {
-    margin-bottom: 20px;
-    border: 1px solid #ffe4d6;
-    border-radius: 1.5rem;
-    overflow: hidden;
+/* === HISTORIAL: NUEVO DISEÑO DE TARJETAS === */
+.historial-tarjeta {
     background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 16px -4px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid #f0e6e0;
+    transition: all 0.2s ease;
 }
 
-.historial-header {
-    background: #ff6b35;
-    color: white;
-    padding: 12px 20px;
-    font-weight: 700;
-    font-size: 0.9rem;
+.historial-tarjeta:hover {
+    box-shadow: 0 8px 24px -6px rgba(255,107,53,0.2);
+    transform: translateY(-2px);
 }
+
+.tarjeta-header {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tarjeta-header .venta-num {
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tarjeta-header .venta-fecha {
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.25);
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-weight: 600;
+}
+
+.tarjeta-body {
+    padding: 14px 16px;
+}
+
+.tarjeta-items {
+    margin-bottom: 12px;
+}
+
+.tarjeta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #f0e6e0;
+    font-size: 0.88rem;
+}
+
+.tarjeta-item:last-child {
+    border-bottom: none;
+}
+
+.tarjeta-item .item-nombre {
+    flex: 1;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.tarjeta-item .item-cant {
+    background: #ffe4d6;
+    color: #c2410c;
+    padding: 2px 10px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0 10px;
+}
+
+.tarjeta-item .item-total {
+    font-weight: 700;
+    color: #1e293b;
+    min-width: 70px;
+    text-align: right;
+}
+
+.tarjeta-resumen {
+    background: #fff8f2;
+    border-radius: 0.75rem;
+    padding: 12px;
+    margin-top: 8px;
+}
+
+.tarjeta-resumen-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    padding: 4px 0;
+    color: #475569;
+}
+
+.tarjeta-resumen-fila.propina {
+    color: #c2410c;
+    font-weight: 600;
+}
+
+.tarjeta-resumen-fila.total {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ff6b35;
+    border-top: 2px solid #ffe4d6;
+    margin-top: 6px;
+    padding-top: 8px;
+}
+
+.tarjeta-pagos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #f0e6e0;
+}
+
+.pago-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+}
+
+.pago-badge.efectivo { background: #28a745; }
+.pago-badge.yape { background: #17a2b8; }
+.pago-badge.plin { background: #6f42c1; }
+.pago-badge.tarjeta { background: #fd7e14; }
+.pago-badge.mixto { background: #6c757d; }
 
 /* === TOTALES DEL DÍA === */
 .totales-dia {
@@ -413,6 +539,7 @@ tr:nth-child(even) {
     text-align: center;
     font-weight: bold;
     font-size: 1rem;
+    color: white;
 }
 
 /* === PESTAÑAS === */
@@ -454,6 +581,60 @@ tr:nth-child(even) {
     border-radius: 1.5rem;
     padding: 1.5rem;
     margin-top: 8px;
+}
+
+.tab-pane {
+    display: none;
+}
+.tab-pane.active {
+    display: block;
+}
+
+/* Desplegables */
+.dias-desplegable {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+.dias-desplegable.abierto {
+    max-height: 3000px;
+    overflow-y: auto;
+}
+.btn-desplegable {
+    width: 100%;
+    text-align: left;
+    background: #f1f5f9;
+    color: #1e293b;
+    border-radius: 1rem;
+    padding: 12px 16px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.btn-desplegable:hover {
+    background: #e2e8f0;
+    box-shadow: none;
+    transform: none;
+}
+.btn-desplegable .flecha {
+    transition: transform 0.3s ease;
+}
+.btn-desplegable.abierto .flecha {
+    transform: rotate(180deg);
+}
+
+.dias-desplegable .top-buttons {
+    margin-top: 12px;
+}
+.dias-desplegable .total-egresos-dia {
+    margin-bottom: 8px;
+}
+.dias-desplegable #listaEgresos {
+    border-radius: 1rem;
+    border: 1px solid #f0e6e0;
+    padding: 4px 8px;
 }
 
 .dia-item {
@@ -698,6 +879,10 @@ tr:nth-child(even) {
     .barra-progreso {
         width: 140px;
     }
+    .tarjeta-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 </style>
 </head>
@@ -740,7 +925,6 @@ tr:nth-child(even) {
                 <option value="Mixto">🔄 Mixto (varios métodos)</option>
             </select>
 
-            <!-- Contenedor para pagos mixtos -->
             <div id="pagoMixtoContainer" style="display:none;">
                 <div style="display:flex; flex-wrap:wrap; gap:8px;">
                     <input type="number" id="montoEfectivo" step="0.50" placeholder="Efectivo S/" style="flex:1; min-width:100px;">
@@ -808,7 +992,7 @@ tr:nth-child(even) {
             </div>
             
             <div class="card">
-                <h2>📜 Historial Completo</h2>
+                <h2>📜 Historial de Ventas</h2>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
                     <input type="text" id="filtroFecha" placeholder="dd/mm/aaaa" style="flex:2;">
                     <button id="btnBuscarFecha" style="background:#17a2b8;">🔍 Buscar</button>
@@ -820,7 +1004,7 @@ tr:nth-child(even) {
                     <button id="btnExportarDia" class="btn-exportar-dia">📅 Exportar DÍA</button>
                 </div>
                 <div id="totalDiaSeleccionado" class="total-dia-filtro" style="display:none;"></div>
-                <div id="historialVentas" style="max-height: 360px; overflow-y: auto;"></div>
+                <div id="historialVentas" style="max-height: 600px; overflow-y: auto; padding-right: 4px;"></div>
             </div>
             
             <div class="tabs-container">
@@ -833,36 +1017,58 @@ tr:nth-child(even) {
                 <div class="tab-content">
                     <div id="tab-30dias" class="tab-pane active">
                         <h3 style="margin-bottom: 18px; color:#667eea;">📊 Ganancias netas de los últimos 30 días (ventas - egresos)</h3>
-                        <div id="ultimos30Dias"><div style="text-align:center;">Cargando...</div></div>
+                        <button class="btn-desplegable" id="btnToggle30Dias">
+                            <span>📅 Ver detalle de los últimos 30 días</span>
+                            <span class="flecha">▼</span>
+                        </button>
+                        <div class="dias-desplegable" id="contenedor30Dias">
+                            <div id="ultimos30Dias"><div style="text-align:center;">Cargando...</div></div>
+                        </div>
                     </div>
+
                     <div id="tab-meses" class="tab-pane">
                         <h3 style="margin-bottom: 15px; color:#667eea;">📊 Ganancia neta por mes (ventas - egresos)</h3>
                         <select id="selectorMes" class="mes-selector"><option value="">Seleccionar Mes</option></select>
                         <div id="totalMes" class="mes-total"><h4>💰 GANANCIA NETA</h4><div class="monto">S/ 0.00</div></div>
                     </div>
+
                     <div id="tab-top" class="tab-pane">
                         <h3 style="margin-bottom: 15px; color:#667eea;">🔥 Productos más vendidos (por cantidad)</h3>
-                        <div class="top-buttons">
-                            <button id="btnTop30Dias" class="top-btn active">📆 Últimos 30 días</button>
-                            <button id="btnTopTodo" class="top-btn">📊 Todo el historial</button>
+                        <button class="btn-desplegable" id="btnToggleTop">
+                            <span>🔥 Ver Top Productos</span>
+                            <span class="flecha">▼</span>
+                        </button>
+                        <div class="dias-desplegable" id="contenedorTop">
+                            <div class="top-buttons">
+                                <button id="btnTop30Dias" class="top-btn active">📆 Últimos 30 días</button>
+                                <button id="btnTopTodo" class="top-btn">📊 Todo el historial</button>
+                            </div>
+                            <div id="topProductosLista"><div style="text-align:center;">Cargando...</div></div>
                         </div>
-                        <div id="topProductosLista"><div style="text-align:center;">Cargando...</div></div>
                     </div>
+
                     <div id="tab-egresos" class="tab-pane">
                         <h3 style="margin-bottom: 15px; color:#667eea;">💸 Registro de Egresos (Gastos)</h3>
-                        <div style="margin-bottom: 20px;">
-                            <button id="btnNuevoEgreso" style="background: #dc3545;">➕ Nuevo Egreso</button>
-                        </div>
-                        <div id="listaEgresos" style="max-height: 400px; overflow-y: auto;">
-                            <div style="text-align:center;">Cargando egresos...</div>
-                        </div>
-                        <div class="total-egresos-dia" style="margin-top: 20px; background: #6c757d;">
-                            💰 TOTAL EGRESOS GENERAL: S/ <span id="totalEgresosGeneral">0.00</span>
+                        <button class="btn-desplegable" id="btnToggleEgresos">
+                            <span>💸 Ver Registro de Egresos</span>
+                            <span class="flecha">▼</span>
+                        </button>
+                        <div class="dias-desplegable" id="contenedorEgresos">
+                            <div style="margin-bottom: 20px;">
+                                <button id="btnNuevoEgreso" style="background: #dc3545;">➕ Nuevo Egreso</button>
+                            </div>
+                            <div id="listaEgresos" style="max-height: 400px; overflow-y: auto;">
+                                <div style="text-align:center;">Cargando egresos...</div>
+                            </div>
+                            <div class="total-egresos-dia" style="margin-top: 20px; background: #6c757d;">
+                                💰 TOTAL EGRESOS GENERAL: S/ <span id="totalEgresosGeneral">0.00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
 <!-- MODALES -->
@@ -1352,10 +1558,69 @@ function actualizarVentasPorProducto() {
     tbody.innerHTML = productosArray.map(p => `<tr><td style="text-align:left;">${p.nombre}</td><td><span style="background:#ff6b35; color:white; padding:2px 12px; border-radius:40px;">${p.cantidad} und</span></td><td style="font-weight:bold; color:#28a745;">S/ ${p.total.toFixed(2)}</td></tr>`).join('');
 }
 
+// ==================== NUEVA FUNCIÓN: GENERAR TARJETA DE VENTA ====================
+function generarTarjetaVenta(v, numVenta) {
+    // Items
+    let itemsHtml = v.items.map(i => `
+        <div class="tarjeta-item">
+            <span class="item-nombre">${i.producto}</span>
+            <span class="item-cant">x${i.cantidad}</span>
+            <span class="item-total">S/ ${i.total.toFixed(2)}</span>
+        </div>
+    `).join('');
+
+    // Resumen
+    let resumenHtml = `
+        <div class="tarjeta-resumen-fila">
+            <span>Subtotal</span>
+            <span>S/ ${v.subtotal.toFixed(2)}</span>
+        </div>
+    `;
+    if (v.propina > 0) {
+        resumenHtml += `
+        <div class="tarjeta-resumen-fila propina">
+            <span>✨ Propina</span>
+            <span>S/ ${v.propina.toFixed(2)}</span>
+        </div>`;
+    }
+    resumenHtml += `
+        <div class="tarjeta-resumen-fila total">
+            <span>💰 TOTAL</span>
+            <span>S/ ${v.total.toFixed(2)}</span>
+        </div>
+    `;
+
+    // Pagos
+    let pagosHtml = '';
+    if (v.pagos && v.pagos.length > 0) {
+        pagosHtml = v.pagos.map(p => {
+            let clase = p.metodo.toLowerCase();
+            return `<span class="pago-badge ${clase}">${p.metodo}: S/ ${p.monto.toFixed(2)}</span>`;
+        }).join('');
+    } else {
+        let clase = (v.metodoPago || 'efectivo').toLowerCase();
+        pagosHtml = `<span class="pago-badge ${clase}">${v.metodoPago}: S/ ${v.total.toFixed(2)}</span>`;
+    }
+
+    return `
+        <div class="historial-tarjeta">
+            <div class="tarjeta-header">
+                <span class="venta-num">🧾 Venta #${numVenta}</span>
+                <span class="venta-fecha">📅 ${v.fecha}</span>
+            </div>
+            <div class="tarjeta-body">
+                <div class="tarjeta-items">${itemsHtml}</div>
+                <div class="tarjeta-resumen">${resumenHtml}</div>
+                <div class="tarjeta-pagos">${pagosHtml}</div>
+            </div>
+        </div>
+    `;
+}
+
 function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
     let div = document.getElementById('historialVentas');
     if(ventasFiltradas.length === 0) {
-        div.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas en esta fecha</p>';
+        div.innerHTML = '<p style="color:#999; text-align:center; padding:20px;">No hay ventas en esta fecha</p>';
         return;
     }
     let totalDia = ventasFiltradas.reduce((sum, v) => sum + v.total, 0);
@@ -1365,30 +1630,7 @@ function mostrarHistorialFiltrado(ventasFiltradas, tituloFecha = null) {
     } else {
         document.getElementById('totalDiaSeleccionado').style.display = 'none';
     }
-    div.innerHTML = ventasFiltradas.map((v, idx) => {
-        let pagosHtml = '';
-        if (v.pagos && v.pagos.length > 0) {
-            pagosHtml = v.pagos.map(p => `${p.metodo}: S/${p.monto.toFixed(2)}`).join(' | ');
-        } else {
-            pagosHtml = `${v.metodoPago}: S/${v.total.toFixed(2)}`;
-        }
-        return `
-        <div class="historial-item">
-            <div class="historial-header">📅 Venta #${ventasFiltradas.length-idx} - ${v.fecha}</div>
-            <div style="padding:10px;">
-                <table style="width:100%; font-size:12px;">
-                    <thead><tr style="background:#ff6b35; color:white;"><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Total</th></tr></thead>
-                    <tbody>
-                        ${v.items.map(i => `<tr><td style="text-align:left;">${i.producto}</td><td style="text-align:center;">${i.cantidad}</td><td style="text-align:right;">S/${i.precio.toFixed(2)}</td><td style="text-align:right;">S/${i.total.toFixed(2)}</td></tr>`).join('')}
-                        <tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;"><strong>Subtotal</strong></td><td style="text-align:right;"><strong>S/${v.subtotal.toFixed(2)}</strong></td></tr>
-                        ${v.propina>0?`<tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;">Propina</td><td style="text-align:right;">S/${v.propina.toFixed(2)}</td></tr>`:''}
-                        <tr style="background:#ff6b35; color:white;"><td colspan="3" style="text-align:right;"><strong>TOTAL</strong></td><td style="text-align:right;"><strong>S/${v.total.toFixed(2)}</strong></td></tr>
-                        <tr><td colspan="4" style="text-align:center; background:#e9ecef;"><strong>💰 Pagos: ${pagosHtml}</strong></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `}).join('');
+    div.innerHTML = ventasFiltradas.map((v, idx) => generarTarjetaVenta(v, ventasFiltradas.length - idx)).join('');
 }
 
 function buscarPorFecha() {
@@ -1415,33 +1657,10 @@ function mostrarTodoHistorial() {
     document.getElementById('totalDiaSeleccionado').style.display = 'none';
     let div = document.getElementById('historialVentas');
     if(historialVentas.length === 0) {
-        div.innerHTML = '<p style="color:#999; text-align:center;">No hay ventas registradas</p>';
+        div.innerHTML = '<p style="color:#999; text-align:center; padding:20px;">No hay ventas registradas</p>';
         return;
     }
-    div.innerHTML = historialVentas.map((v, idx) => {
-        let pagosHtml = '';
-        if (v.pagos && v.pagos.length > 0) {
-            pagosHtml = v.pagos.map(p => `${p.metodo}: S/${p.monto.toFixed(2)}`).join(' | ');
-        } else {
-            pagosHtml = `${v.metodoPago}: S/${v.total.toFixed(2)}`;
-        }
-        return `
-        <div class="historial-item">
-            <div class="historial-header">📅 Venta #${historialVentas.length-idx} - ${v.fecha}</div>
-            <div style="padding:10px;">
-                <table style="width:100%; font-size:12px;">
-                    <thead><tr style="background:#ff6b35; color:white;"><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Total</th></tr></thead>
-                    <tbody>
-                        ${v.items.map(i => `<tr><td style="text-align:left;">${i.producto}</td><td style="text-align:center;">${i.cantidad}</td><td style="text-align:right;">S/${i.precio.toFixed(2)}</td><td style="text-align:right;">S/${i.total.toFixed(2)}</td></tr>`).join('')}
-                        <tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;"><strong>Subtotal</strong></td><td style="text-align:right;"><strong>S/${v.subtotal.toFixed(2)}</strong></td></tr>
-                        ${v.propina>0?`<tr style="background:#f0f0f0;"><td colspan="3" style="text-align:right;">Propina</td><td style="text-align:right;">S/${v.propina.toFixed(2)}</td></tr>`:''}
-                        <tr style="background:#ff6b35; color:white;"><td colspan="3" style="text-align:right;"><strong>TOTAL</strong></td><td style="text-align:right;"><strong>S/${v.total.toFixed(2)}</strong></td></tr>
-                        <tr><td colspan="4" style="text-align:center; background:#e9ecef;"><strong>💰 Pagos: ${pagosHtml}</strong></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `}).join('');
+    div.innerHTML = historialVentas.map((v, idx) => generarTarjetaVenta(v, historialVentas.length - idx)).join('');
 }
 
 // ==================== TOP PRODUCTOS ====================
@@ -1456,6 +1675,7 @@ function actualizarTopProductos() {
     }
     let resumen = {};
     ventasFiltradas.forEach(venta => {
+        if (!venta.items) return;
         venta.items.forEach(item => {
             if(!resumen[item.producto]) resumen[item.producto] = { cantidad: 0, total: 0 };
             resumen[item.producto].cantidad += item.cantidad;
@@ -1537,6 +1757,7 @@ function cargarCantidades() {
 
 function agregarProducto() {
     let producto = productos.find(p => p.id === parseInt(document.getElementById('producto').value));
+    if (!producto) return;
     let cantidad = parseInt(document.getElementById('cantidad').value);
     let metodo = document.getElementById('metodoPago').value;
     let existente = ventaActual.find(v => v.productoId === producto.id);
@@ -1652,7 +1873,6 @@ function finalizarVenta() {
     actualizarTopProductos();
     if (document.getElementById('selectorMes').value) actualizarTotalMes();
 
-    // Limpiar campos mixtos
     document.getElementById('montoEfectivo').value = '';
     document.getElementById('montoYape').value = '';
     document.getElementById('montoPlin').value = '';
@@ -1796,13 +2016,30 @@ function initTabs() {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+            const pane = document.getElementById(tabId);
+            if (pane) pane.classList.add('active');
+
             if(tabId === 'tab-30dias') actualizarUltimos30Dias();
             if(tabId === 'tab-meses') actualizarSelectorMeses();
             if(tabId === 'tab-top') actualizarTopProductos();
             if(tabId === 'tab-egresos') actualizarListaEgresos();
         });
     });
+
+    function configurarDesplegable(btnId, contenedorId) {
+        const btnToggle = document.getElementById(btnId);
+        const contenedor = document.getElementById(contenedorId);
+        if (btnToggle && contenedor) {
+            btnToggle.addEventListener('click', () => {
+                btnToggle.classList.toggle('abierto');
+                contenedor.classList.toggle('abierto');
+            });
+        }
+    }
+
+    configurarDesplegable('btnToggle30Dias', 'contenedor30Dias');
+    configurarDesplegable('btnToggleTop', 'contenedorTop');
+    configurarDesplegable('btnToggleEgresos', 'contenedorEgresos');
 }
 
 function inicializarSistema() {
@@ -1817,7 +2054,6 @@ function inicializarSistema() {
     actualizarListaEgresos();
     initTabs();
     
-    // Eventos del método de pago mixto
     document.getElementById('metodoPago').addEventListener('change', function() {
         const container = document.getElementById('pagoMixtoContainer');
         if (this.value === 'Mixto') {
