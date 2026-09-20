@@ -572,6 +572,47 @@ tr:nth-child(even) {
     background: #0f5b7a;
 }
 
+.botones-reporte {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-whatsapp {
+    flex: 1;
+    background: #25D366;
+    color: white;
+    border-radius: 60px;
+    padding: 12px 14px;
+    font-weight: 700;
+    min-width: 180px;
+}
+
+.btn-whatsapp:hover {
+    background: #1ebe5b;
+    box-shadow: 0 6px 14px rgba(37,211,102,0.4);
+}
+
+.btn-meses {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 60px;
+    padding: 12px 14px;
+    font-weight: 700;
+    min-width: 180px;
+}
+
+.btn-meses:hover {
+    box-shadow: 0 6px 14px rgba(102,126,234,0.4);
+}
+
+.modal-contenido-grande {
+    width: 560px;
+    max-width: 94%;
+}
+
 /* === LISTA DE EGRESOS === */
 .egreso-item {
     display: flex;
@@ -761,6 +802,10 @@ tr:nth-child(even) {
                     </div>
                 </div>
             </div>
+            <div class="botones-reporte">
+                <button id="btnWhatsAppDia" class="btn-whatsapp">📲 Reporte del Día (WhatsApp)</button>
+                <button id="btnVerMeses" class="btn-meses">📅 Ventas de cada Mes</button>
+            </div>
             
             <div class="card">
                 <h2>📜 Historial Completo</h2>
@@ -818,7 +863,6 @@ tr:nth-child(even) {
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 <!-- MODALES -->
@@ -839,6 +883,14 @@ tr:nth-child(even) {
         <input type="date" id="egresoFecha" style="width:100%; margin:10px 0; border-radius: 60px;">
         <button id="btnGuardarEgreso" style="background: #28a745;">Guardar Egreso</button>
         <button id="btnCancelarEgreso">Cancelar</button>
+    </div>
+</div>
+
+<div id="modalMeses" class="modal">
+    <div class="modal-contenido modal-contenido-grande">
+        <h3>📅 Ventas por Mes</h3>
+        <div id="contenidoMeses"></div>
+        <button id="btnCerrarMeses">Cerrar</button>
     </div>
 </div>
 
@@ -1210,6 +1262,73 @@ function actualizarResumenDelDia() {
     let neto = totales.General - egresosHoy;
     document.getElementById('netoDia').innerHTML = neto.toFixed(2);
 }
+
+// ==================== REPORTE WHATSAPP Y VENTAS POR MES ====================
+const NUMERO_WHATSAPP = "51912404031";
+
+function construirReporteDia() {
+    let hoy = getPeruDateObject();
+    let fechaHoyStr = formatDateToDMY(hoy);
+    let ventasHoy = historialVentas.filter(v => formatDateToDMY(new Date(v.fechaObjPeru || v.fechaObj)) === fechaHoyStr);
+    let totalVentas = ventasHoy.reduce((s, v) => s + v.total, 0);
+    let egresosHoy = getTotalEgresosPorFecha(fechaHoyStr);
+
+    let fechaLarga = getPeruTime().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+    let msg = `📊 *REPORTE DEL DÍA - EL IDEAL*\n`;
+    msg += `📅 ${fechaLarga}\n`;
+    msg += `━━━━━━━━━━━━━━━━\n`;
+    msg += `💰 *TOTAL VENTAS: S/ ${totalVentas.toFixed(2)}*\n`;
+    msg += `💸 Egresos: S/ ${egresosHoy.toFixed(2)}\n`;
+    return msg;
+}
+
+function enviarReporteWhatsApp() {
+    let msg = construirReporteDia();
+    let url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+}
+
+function verVentasPorMes() {
+    let mesesMap = {};
+    historialVentas.forEach(venta => {
+        let fecha = new Date(venta.fechaObjPeru || venta.fechaObj);
+        let clave = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`;
+        if(!mesesMap[clave]) mesesMap[clave] = { ventas: 0, egresos: 0 };
+        mesesMap[clave].ventas += venta.total;
+    });
+    egresos.forEach(egreso => {
+        let [d, m, a] = egreso.fecha.split('/');
+        let clave = `${a}-${String(m).padStart(2,'0')}`;
+        if(!mesesMap[clave]) mesesMap[clave] = { ventas: 0, egresos: 0 };
+        mesesMap[clave].egresos += egreso.monto;
+    });
+    let claves = Object.keys(mesesMap).sort().reverse();
+    let html = `<table>
+        <thead><tr><th>Mes</th><th>Ventas</th><th>Egresos</th><th>Neto</th></tr></thead>
+        <tbody>`;
+    if(claves.length === 0) {
+        html += `<tr><td colspan="4" style="text-align:center;">No hay datos registrados</td></tr>`;
+    } else {
+        claves.forEach(clave => {
+            let [year, month] = clave.split('-');
+            let nombreMes = new Date(year, month-1).toLocaleString('es-ES', { month: 'long' });
+            let datos = mesesMap[clave];
+            let neto = datos.ventas - datos.egresos;
+            html += `<tr>
+                <td style="text-align:left; font-weight:bold;">${nombreMes} ${year}</td>
+                <td style="color:#2c7a4d; font-weight:bold;">S/ ${datos.ventas.toFixed(2)}</td>
+                <td style="color:#dc3545;">S/ ${datos.egresos.toFixed(2)}</td>
+                <td style="color:${neto >= 0 ? '#2c7a4d' : '#dc3545'}; font-weight:bold;">S/ ${neto.toFixed(2)}</td>
+            </tr>`;
+        });
+    }
+    html += `</tbody></table>`;
+    document.getElementById('contenidoMeses').innerHTML = html;
+    document.getElementById('modalMeses').style.display = 'flex';
+}
+
+function cerrarModalMeses() { document.getElementById('modalMeses').style.display = 'none'; }
 
 // ==================== HISTORIAL Y VENTAS POR PRODUCTO ====================
 function actualizarVentasPorProducto() {
@@ -1717,6 +1836,9 @@ function inicializarSistema() {
     document.getElementById('btnCancelarVenta').onclick = cancelarVenta;
     document.getElementById('btnExportarTodo').onclick = exportarExcelCompleto;
     document.getElementById('btnExportarDia').onclick = exportarExcelDia;
+    document.getElementById('btnWhatsAppDia').onclick = enviarReporteWhatsApp;
+    document.getElementById('btnVerMeses').onclick = verVentasPorMes;
+    document.getElementById('btnCerrarMeses').onclick = cerrarModalMeses;
     document.getElementById('btnAplicarPropina').onclick = agregarPropina;
     document.getElementById('btnCancelarPropina').onclick = cerrarModalPropina;
     document.getElementById('btnCerrarNotificacion').onclick = cerrarModalNotificacion;
